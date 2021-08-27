@@ -9,12 +9,17 @@ MDScreen:
     ml: ml
     gram: gram
     comment: comment
+    unit: unit
 
     MDFloatLayout:
+
         md_bg_color: 72/255, 61/255, 139/255, .5
 
 
-
+        MDLabel:
+            id: unit
+            text: ''
+            pos_hint: {"center_x": .01, "center_y": .5}
         MDLabel:
             text: 'Create Ingredient'
             pos_hint: {"center_x": .6, "center_y": .96}
@@ -93,7 +98,10 @@ MDScreen:
             font_size: '18sp'
             pos_hint: {"center_x": .53, "center_y": .67}
             group: 'unit'
-#            state: 'down'
+            on_state:
+                if self.state == "down":\
+                unit.text = ' pcs'
+
 
 
         MyToggleButton:
@@ -103,6 +111,9 @@ MDScreen:
             font_size: '18sp'
             pos_hint: {"center_x": .69, "center_y": .67}
             group: 'unit'
+            on_state:
+                if self.state == "down":\
+                unit.text = ' ml'
 
         MyToggleButton:
             id: gram
@@ -111,6 +122,9 @@ MDScreen:
             font_size: '18sp'
             pos_hint: {"center_x": .85, "center_y": .67}
             group: 'unit'
+            on_state:
+                if self.state == "down":\
+                unit.text = ' gram'
 
         MDFloatLayout:
             size_hint: .85, .28
@@ -133,6 +147,7 @@ MDScreen:
                 padding: 15
                 font_size: '18sp'
 
+
         Buttons:
             text: 'Add'
             size_hint: .45, .08
@@ -140,10 +155,8 @@ MDScreen:
             background_color: 0, 0, 0, 0
             font_size: '18sp'
             color: 1, 1, 1, 1
-            on_press:
-                app.add_ingredient_to_base()
             on_release:
-                app.create_ingredient(names.text, price.text, quantity.text)
+                app.create_ingredient(names.text, price.text, quantity.text, pcs.state, ml.state, gram.state, comment.text, unit.text)
                 Snackbar(text="[color=#ff6600]Ingredient [/color]" +str(names.text)+ "[color=#ff6600] added![/color]",
                 snackbar_x='10dp', snackbar_y='10dp',
                 size_hint_x=(Window.width - (dp(10) * 2))/Window.width,
@@ -154,6 +167,9 @@ MDScreen:
                 price.text=''
                 quantity.text=''
                 comment.text=''
+                pcs.state='normal'
+                ml.state='normal'
+                gram.state='normal'
 
             canvas.before:
                 Color:

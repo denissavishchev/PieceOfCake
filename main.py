@@ -13,13 +13,15 @@ Window.size = (360, 770)  #(1080, 2340)
 
 
 class AddIngredient(FakeRectangularElevationBehavior, FloatLayout):
-    names = StringProperty()
-    price = StringProperty()
-    quantity = StringProperty()
-    pcs = StringProperty()
-    ml = StringProperty()
-    gr = StringProperty()
-    comment = StringProperty()
+    names = ObjectProperty()
+    price = ObjectProperty()
+    quantity = ObjectProperty()
+    pcs = ObjectProperty()
+    ml = ObjectProperty()
+    gram = ObjectProperty()
+    comment = ObjectProperty()
+    unit = ObjectProperty()
+
 
 
 
@@ -33,13 +35,15 @@ class MyToggleButton(MDFillRoundFlatButton, MDToggleButton):
 
 
 class PieceofCake(MDApp, Screen):
-    names = ObjectProperty(None)
+    names = ObjectProperty()
     price = ObjectProperty(None)
     quantity = ObjectProperty(None)
     pcs = ObjectProperty(None)
     ml = ObjectProperty(None)
     gram = ObjectProperty(None)
     comment = ObjectProperty(None)
+    unit = ObjectProperty()
+
 
     def build(self):
         global screen_manager
@@ -64,13 +68,33 @@ class PieceofCake(MDApp, Screen):
                 description.text = description.text.replace(i, "")
                 bar.md_bg_color = 1, 170/255, 23/255, 1
 
-    def create_ingredient(self, names, price, quantity):
-        screen_manager.get_screen('ingredientList').ingredientList.add_widget(AddIngredient(names=names, price=price, quantity=quantity))
+    def create_ingredient(self, names, price, quantity, pcs, ml, gram, comment, unit):
+        screen_manager.get_screen('ingredientList').ingredientList.add_widget(AddIngredient(names=names, price=price, quantity=quantity,
+                                                                                            pcs=pcs, ml=ml, gram=gram, comment=comment, unit=unit))
+
+        # if pcs == 'down':
+        #     unit = 'pcs'
+        # elif ml == 'down':
+        #     unit = 'ml'
+        # elif gram == 'down':
+        #     unit = 'gram'
+        # else:
+        #     unit = 'NA'
+        #
+        # print(unit)
+
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        cur.execute(""" INSERT INTO sweet (names,price,quantity,pcs,ml,gram,comment) VALUES (?,?,?,?,?,?,?)""",
+                    (names, price, quantity, pcs, ml, gram, comment))
+        con.commit()
+        con.close()
 
 
-    def add_ingredient_to_base(self):
 
-        # names = self.names.text
+    # def add_ingredient_to_base(self):
+    #     pass
+        # names1 = self.create_i.ids.names.text
         # price = self.price.text
         # quantity = self.quantity.text
         # pcs = self.pcs.state
@@ -78,13 +102,9 @@ class PieceofCake(MDApp, Screen):
         # gram = self.gr.state
         # comment = self.comment.text
 
-        con = sql.connect('sweet.db')
-        cur = con.cursor()
-        cur.execute(""" INSERT INTO sweet (names,price,quantity,pcs,ml,gram,comment) VALUES (?,?,?,?,?,?,?)""",
-                    (self.names.text, self.price.text, self.quantity.text, self.pcs.state, self.ml.state,
-                     self.gram.state, self.comment.text))
-        con.commit()
-        con.close()
+        # print(names1)
+
+
 
     def ingredientList(self):
         screen_manager.get_screen('ingredientList')
