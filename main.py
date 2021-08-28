@@ -3,6 +3,7 @@ from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivy.properties import StringProperty
 from kivy.properties import ObjectProperty
+from kivy.properties import ListProperty
 from kivymd.uix.button import MDFillRoundFlatButton
 from kivymd.uix.behaviors.toggle_behavior import MDToggleButton
 import sqlite3 as sql
@@ -21,9 +22,6 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout):
     gram = ObjectProperty()
     comment = ObjectProperty()
     unit = ObjectProperty()
-
-
-
 
 
 class MyToggleButton(MDFillRoundFlatButton, MDToggleButton):
@@ -58,51 +56,23 @@ class PieceofCake(MDApp, Screen):
         pass
         # screen_manager.get_screen('main').date.text = 'Hello'
 
-    def on_complete(self, checkbox, value, description, bar):
-        if value:
-            description.text = f"[s]{description.text}[/s]"
-            bar.md_bg_color = 0, 179/255, 0, 1
-        else:
-            remove = ["[s]", "[/s]"]
-            for i in remove:
-                description.text = description.text.replace(i, "")
-                bar.md_bg_color = 1, 170/255, 23/255, 1
 
     def create_ingredient(self, names, price, quantity, pcs, ml, gram, comment, unit):
         screen_manager.get_screen('ingredientList').ingredientList.add_widget(AddIngredient(names=names, price=price, quantity=quantity,
                                                                                             pcs=pcs, ml=ml, gram=gram, comment=comment, unit=unit))
 
-        # if pcs == 'down':
-        #     unit = 'pcs'
-        # elif ml == 'down':
-        #     unit = 'ml'
-        # elif gram == 'down':
-        #     unit = 'gram'
-        # else:
-        #     unit = 'NA'
-        #
-        # print(unit)
-
-        con = sql.connect('sweet.db')
-        cur = con.cursor()
-        cur.execute(""" INSERT INTO sweet (names,price,quantity,pcs,ml,gram,comment) VALUES (?,?,?,?,?,?,?)""",
-                    (names, price, quantity, pcs, ml, gram, comment))
-        con.commit()
-        con.close()
+        # con = sql.connect('sweet.db')
+        # cur = con.cursor()
+        # cur.execute(""" INSERT INTO sweet (names,price,quantity,pcs,ml,gram,comment) VALUES (?,?,?,?,?,?,?)""",
+        #             (names, price, quantity, pcs, ml, gram, comment))
+        # con.commit()
+        # con.close()
 
 
 
-    # def add_ingredient_to_base(self):
-    #     pass
-        # names1 = self.create_i.ids.names.text
-        # price = self.price.text
-        # quantity = self.quantity.text
-        # pcs = self.pcs.state
-        # ml = self.ml.state
-        # gram = self.gr.state
-        # comment = self.comment.text
-
-        # print(names1)
+    # def add_comment(self, comment):
+    #
+    #     print(comment)
 
 
 
