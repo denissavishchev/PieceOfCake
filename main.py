@@ -1,15 +1,18 @@
+
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivymd.app import MDApp
 from kivy.lang import Builder
-from kivy.properties import StringProperty
+from kivymd.uix.dialog import MDDialog
 from kivy.properties import ObjectProperty
-from kivy.properties import ListProperty
+from kivy.uix.widget import Widget
 from kivymd.uix.button import MDFillRoundFlatButton
 from kivymd.uix.behaviors.toggle_behavior import MDToggleButton
 import sqlite3 as sql
 from kivymd.uix.behaviors import FakeRectangularElevationBehavior
 from kivymd.uix.floatlayout import FloatLayout
+from kivymd.uix.label import MDLabel
 from kivy.core.window import Window
+from kivymd.uix.button import MDFlatButton
 Window.size = (360, 770)  #(1080, 2340)
 
 
@@ -22,7 +25,6 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout):
     gram = ObjectProperty()
     comment = ObjectProperty()
     unit = ObjectProperty()
-
 
 class MyToggleButton(MDFillRoundFlatButton, MDToggleButton):
     def __init__(self, **kwargs):
@@ -68,12 +70,12 @@ class PieceofCake(MDApp, Screen):
         # con.commit()
         # con.close()
 
+    def show_comment(self, comment):
+        self.comment = comment
+        self.dialog = MDDialog(
+            title=str(comment), on_touch_down=MDDialog.dismiss, md_bg_color=(72/255, 61/255, 139/255, .9), radius=[20])
 
-
-    # def add_comment(self, comment):
-    #
-    #     print(comment)
-
+        self.dialog.open()
 
 
     def ingredientList(self):
