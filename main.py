@@ -1,3 +1,5 @@
+import datetime
+from time import strftime
 
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivymd.app import MDApp
@@ -60,23 +62,48 @@ class PieceofCake(MDApp, Screen):
 
 
     def create_ingredient(self, names, price, quantity, pcs, ml, gram, comment, unit):
-        screen_manager.get_screen('ingredientList').ingredientList.add_widget(AddIngredient(names=names, price=price, quantity=quantity,
-                                                                                            pcs=pcs, ml=ml, gram=gram, comment=comment, unit=unit))
 
-        # con = sql.connect('sweet.db')
-        # cur = con.cursor()
-        # cur.execute(""" INSERT INTO sweet (names,price,quantity,pcs,ml,gram,comment) VALUES (?,?,?,?,?,?,?)""",
-        #             (names, price, quantity, pcs, ml, gram, comment))
-        # con.commit()
-        # con.close()
+        now = strftime('%Y-%m-%d %H:%M:%S')
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        cur.execute(""" INSERT INTO sweet (names,price,quantity,pcs,ml,gram,comment,timeadding) VALUES (?,?,?,?,?,?,?,?)""",
+                    (names, price, quantity, pcs, ml, gram, comment, now))
+        con.commit()
+        con.close()
 
     def show_comment(self, comment):
         self.comment = comment
         self.dialog = MDDialog(
             title=str(comment), on_touch_down=MDDialog.dismiss, md_bg_color=(72/255, 61/255, 139/255, .9), radius=[20])
-
         self.dialog.open()
 
+    def load_ingredient(self):
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        cur.execute("""SELECT * FROM sweet ORDER BY timeadding DESC""")
+        for x in cur:
+            names = x[1]
+            price = x[2]
+            quantity = x[3]
+            pcs = x[4]
+            ml = x[5]
+            gram = x[6]
+            comment = x[7]
+
+            if pcs == 'down':
+                unit = 'pcs'
+            elif ml == 'down':
+                unit = 'ml'
+            elif gram == 'down':
+                unit = 'gr'
+            else:
+                unit = 'NA'
+
+            screen_manager.get_screen('ingredientList').ingredientList.add_widget(AddIngredient(names=names, price=price, quantity=quantity,
+                                                                                       pcs=pcs, ml=ml, gram=gram, comment=comment, unit=unit))
+
+    def clean_ingredient_list(self):
+        screen_manager.get_screen('ingredientList').ingredientList.clear_widgets()
 
     def ingredientList(self):
         screen_manager.get_screen('ingredientList')
@@ -92,7 +119,8 @@ class PieceofCake(MDApp, Screen):
             pcs state,
             ml state,
             gram state,
-            comment text)
+            comment text,
+            timeadding timestamp)
             """)
     con.commit()
     con.close()
