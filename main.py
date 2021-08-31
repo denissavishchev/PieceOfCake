@@ -45,6 +45,7 @@ class PieceofCake(MDApp, Screen):
     gram = ObjectProperty(None)
     comment = ObjectProperty(None)
     unit = ObjectProperty()
+    search = ObjectProperty()
 
 
     def build(self):
@@ -107,6 +108,20 @@ class PieceofCake(MDApp, Screen):
 
     def ingredientList(self):
         screen_manager.get_screen('ingredientList')
+
+    def search_ingredient(self, search):
+        wyj = []
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        cur.execute("""SELECT * FROM sweet""")
+        for x in cur:
+            names = x[1]
+            # print(names)
+            for y in names:
+                if y in search:
+                    wyj.append(y)
+                    print(wyj)
+
 
 # Create the SQL
     con = sql.connect('sweet.db')

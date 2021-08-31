@@ -1,5 +1,5 @@
 MDScreen:
-
+    search: search
     ingredientList: ingredientList
     name: 'ingredientList'
     MDFloatLayout:
@@ -19,8 +19,9 @@ MDScreen:
                     pos: self.pos
                     radius: [25]
             TextInput:
-                id: names
+                id: search
                 hint_text: 'Search...'
+                multiline: False
                 size_hint: 1, None
                 pos_hint: {"center_x": .5, "center_y": .5}
                 height: self.minimum_height
@@ -29,6 +30,8 @@ MDScreen:
                 background_color: 0, 0, 0, 0
                 padding: 15
                 font_size: '18sp'
+                on_text:
+                    app.search_ingredient(search.text)
 
 
         ScrollView:
