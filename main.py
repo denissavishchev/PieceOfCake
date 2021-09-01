@@ -78,6 +78,28 @@ class PieceofCake(MDApp, Screen):
             title=str(comment), on_touch_down=MDDialog.dismiss, md_bg_color=(72/255, 61/255, 139/255, .9), radius=[20])
         self.dialog.open()
 
+
+    def clean_ingredient_list(self):
+        screen_manager.get_screen('ingredientList').ingredientList.clear_widgets()
+
+    def ingredientList(self):
+        screen_manager.get_screen('ingredientList')
+
+    all_ingredients = []
+    filtered_ingredients = []
+
+    def search_ingredient(self, search):
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        cur.execute("""SELECT * FROM sweet""")
+        for x in cur:
+            self.all_ingredients.append(x[1])
+
+        for x in self.all_ingredients:
+            if search.lower() in x.lower():
+                self.filtered_ingredients.append(x)
+        print(self.filtered_ingredients)
+
     def load_ingredient(self):
         con = sql.connect('sweet.db')
         cur = con.cursor()
@@ -90,6 +112,7 @@ class PieceofCake(MDApp, Screen):
             ml = x[5]
             gram = x[6]
             comment = x[7]
+            # self.all_ingredients.append(x)
 
             if pcs == 'down':
                 unit = 'pcs'
@@ -103,24 +126,6 @@ class PieceofCake(MDApp, Screen):
             screen_manager.get_screen('ingredientList').ingredientList.add_widget(AddIngredient(names=names, price=price, quantity=quantity,
                                                                                        pcs=pcs, ml=ml, gram=gram, comment=comment, unit=unit))
 
-    def clean_ingredient_list(self):
-        screen_manager.get_screen('ingredientList').ingredientList.clear_widgets()
-
-    def ingredientList(self):
-        screen_manager.get_screen('ingredientList')
-
-    def search_ingredient(self, search):
-        wyj = []
-        con = sql.connect('sweet.db')
-        cur = con.cursor()
-        cur.execute("""SELECT * FROM sweet""")
-        for x in cur:
-            names = x[1]
-            # print(names)
-            for y in names:
-                if y in search:
-                    wyj.append(y)
-                    print(wyj)
 
 
 # Create the SQL
