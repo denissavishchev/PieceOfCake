@@ -1,6 +1,4 @@
-import datetime
 from time import strftime
-
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivymd.app import MDApp
 from kivy.lang import Builder
