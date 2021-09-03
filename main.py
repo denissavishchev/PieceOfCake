@@ -45,7 +45,7 @@ class PieceofCake(MDApp, Screen):
     gram = ObjectProperty(None)
     comment = ObjectProperty(None)
     unit = ObjectProperty()
-    search = ObjectProperty()
+    message = ObjectProperty()
 
 
     def build(self):
@@ -85,26 +85,32 @@ class PieceofCake(MDApp, Screen):
     def ingredientList(self):
         screen_manager.get_screen('ingredientList')
 
-    all_ingredients = []
-    filtered_ingredients = []
 
-    def search_ingredient(self, search):
-        con = sql.connect('sweet.db')
-        cur = con.cursor()
-        cur.execute("""SELECT * FROM sweet""")
-        for x in cur:
-            self.all_ingredients.append(x[1])
+    def filter_ingredients(self, ingredients, message):
+        if message == '':
+            return ingredients
 
-        for x in self.all_ingredients:
-            if search.lower() in x.lower():
-                self.filtered_ingredients.append(x)
-        print(self.filtered_ingredients)
+        filteredIngredients = []
 
-    def load_ingredient(self):
+        for x in ingredients:
+            if message.lower() in x[1].lower():
+                filteredIngredients.append(x)
+
+        return filteredIngredients
+
+    def load_ingredient(self, search = ''):
         con = sql.connect('sweet.db')
         cur = con.cursor()
         cur.execute("""SELECT * FROM sweet ORDER BY timeadding DESC""")
+
+        toFilter = []
         for x in cur:
+            toFilter.append(x)
+
+        filteredIngredients = self.filter_ingredients(toFilter, search)
+
+        screen_manager.get_screen('ingredientList').ingredientList.clear_widgets()
+        for x in filteredIngredients:
             names = x[1]
             price = x[2]
             quantity = x[3]
@@ -112,7 +118,6 @@ class PieceofCake(MDApp, Screen):
             ml = x[5]
             gram = x[6]
             comment = x[7]
-            # self.all_ingredients.append(x)
 
             if pcs == 'down':
                 unit = 'pcs'
@@ -123,9 +128,7 @@ class PieceofCake(MDApp, Screen):
             else:
                 unit = 'NA'
 
-            screen_manager.get_screen('ingredientList').ingredientList.add_widget(AddIngredient(names=names, price=price, quantity=quantity,
-                                                                                       pcs=pcs, ml=ml, gram=gram, comment=comment, unit=unit))
-
+            screen_manager.get_screen('ingredientList').ingredientList.add_widget(AddIngredient(names=names, price=price, quantity=quantity, ml=ml, gram=gram, comment=comment, unit=unit))
 
 
 # Create the SQL
