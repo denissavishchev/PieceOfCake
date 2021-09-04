@@ -15,6 +15,8 @@ from kivymd.uix.behaviors import TouchBehavior
 from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
+from kivymd.uix.textfield import MDTextFieldRect
+from kivymd.uix.textfield import MDTextFieldRound
 from kivy.uix.textinput import TextInput
 Window.size = (360, 770)  #(1080, 2340)
 
@@ -28,6 +30,13 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
     gram = ObjectProperty()
     comment = ObjectProperty()
     unit = ObjectProperty()
+    edit_names = ObjectProperty()
+    edit_price = ObjectProperty()
+    edit_quantity = ObjectProperty()
+    edit_pcs = ObjectProperty()
+    edit_ml = ObjectProperty()
+    edit_gram = ObjectProperty()
+    edit_comment = ObjectProperty()
 
     def on_long_touch(self, *args):
         layout = BoxLayout(orientation='vertical')
@@ -48,20 +57,62 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
                                                   size_hint=(.1, .3),
                                                   theme_text_color='Custom',
                                                   text_color=(0, 1, 0, 1),
-                                                  on_release=self.closeWindow)
+                                                  on_release=self.closeWindow1)
         layout1.add_widget(self.closeButton)
         layout.add_widget(layout1)
 
-        self.pop = Popup(title=self.names, background_color='white',
+        self.pop1 = Popup(title=self.names, background_color='white',
                          content=layout,
                          size_hint=(None, None), size=(600, 300), pos_hint={'center_x': .5, 'center_y': .5})
-        self.pop.open()
+        self.pop1.open()
         return layout
 
     def edit_button(self, obj):
-        screen_manager.current = 'maining'
-        print('Edit')
-        self.pop.dismiss()
+
+        layout = BoxLayout(orientation='vertical')
+        layout1 = FloatLayout()
+
+        self.editNames = MDTextFieldRect(text=self.names, pos=(100, 1000), size_hint=(.95, .07), multiline=False)
+        layout1.add_widget(self.editNames)
+
+        self.editPrice = MDTextFieldRect(text=self.price, pos=(100, 920), size_hint=(.45, .07), multiline=False)
+        layout1.add_widget(self.editPrice)
+
+        self.editQty = MDTextFieldRect(text=self.quantity, pos=(100, 840), size_hint=(.45, .07), multiline=False)
+        layout1.add_widget(self.editQty)
+
+        self.editPcs = MyToggleButton(text='Pcs', pos=(350, 840), size_hint=(.09, .07), group='unit')
+        self.editMl = MyToggleButton(text='Ml', pos=(450, 840), size_hint=(.09, .07), group='unit')
+        self.editGram = MyToggleButton(text='Gr', pos=(550, 840), size_hint=(.09, .07), group='unit')
+
+        self.editComment = MDTextFieldRect(text=self.comment, pos=(100, 600), size_hint=(.95, .3))
+
+        layout1.add_widget(self.editPcs)
+        layout1.add_widget(self.editMl)
+        layout1.add_widget(self.editGram)
+        layout1.add_widget(self.editComment)
+
+        self.editButton = MDFillRoundFlatButton(text='Edit', pos_hint={'center_x': .45, 'center_y': .2},
+                                                 size_hint=(.3, .1),
+                                                 theme_text_color='Custom',
+                                                 text_color=(0, 1, 0, 1),
+                                                 on_release=self.editIngredient)
+        layout1.add_widget(self.editButton)
+
+        self.close2Button = MDFillRoundFlatButton(text='X', pos_hint={'center_x': .9, 'center_y': .2},
+                                                size_hint=(.1, .1),
+                                                theme_text_color='Custom',
+                                                text_color=(0, 1, 0, 1),
+                                                on_press=self.closeWindow1,
+                                                on_release=self.closeWindow2)
+        layout1.add_widget(self.close2Button)
+        layout.add_widget(layout1)
+
+        self.pop2 = Popup(title=self.names, background_color='white',
+                         content=layout,
+                         size_hint=(None, None), size=(600, 800), pos_hint={'center_x': .5, 'center_y': .5}, auto_dismiss=False)
+        self.pop2.open()
+        return layout
 
     def delete_button(self, obj):
         con = sql.connect('sweet.db')
@@ -71,7 +122,7 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
         cur.execute(delete, (self.names,))
         con.commit()
 
-        self.pop.dismiss()
+        self.pop1.dismiss()
         self.pieceofcake = PieceofCake()
         self.pieceofcake.clean_ingredient_list()
         self.pieceofcake.load_ingredient()
@@ -84,9 +135,22 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
                  radius=[20],
                  font_size='17sp').open()
 
+    def editIngredient(self, obj):
+        pass
+        # now = strftime('%Y-%m-%d %H:%M:%S')
+        # con = sql.connect('sweet.db')
+        # cur = con.cursor()
+        # cur.execute(
+        #     """ INSERT INTO sweet (names,price,quantity,pcs,ml,gram,comment,timeadding) VALUES (?,?,?,?,?,?,?,?)""",
+        #     (self.names, self.price, self.quantity, self.pcs, self.ml, self.gram, self.comment, now))
+        # con.commit()
+        # con.close()
 
-    def closeWindow(self, obj):
-        self.pop.dismiss()
+
+    def closeWindow1(self, obj):
+        self.pop1.dismiss()
+    def closeWindow2(self, obj):
+        self.pop2.dismiss()
 
 class MyToggleButton(MDFillRoundFlatButton, MDToggleButton):
     def __init__(self, **kwargs):

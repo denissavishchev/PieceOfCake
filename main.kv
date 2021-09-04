@@ -76,13 +76,13 @@ MDScreen:
             on_release:
                 root.manager. transition.direction = 'up'
                 root.manager.current = 'create'
-                app.toCreateWindow()
+
         Buttons:
             text: 'Create\nRecipe'
             pos_hint: {"center_x": .66, "center_y": .87}
             on_release:
                 root.manager. transition.direction = 'up'
-#                root.manager.current = 'add_todo'
+                root.manager.current = 'create'
         Buttons:
             text: 'List of \nRecipes'
             pos_hint: {"center_x": .87, "center_y": .87}
