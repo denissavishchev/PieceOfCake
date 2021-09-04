@@ -1,7 +1,8 @@
 #:import Snackbar kivymd.uix.snackbar.Snackbar
 #:import Window kivy.core.window.Window
 MDScreen:
-    name: 'create_ingredient'
+    create_ingredient: create_ingredient
+    name: 'create'
     names: names
     price: price
     quantity: quantity
@@ -12,7 +13,7 @@ MDScreen:
     unit: unit
 
     MDFloatLayout:
-
+        id: create_ingredient
         md_bg_color: 72/255, 61/255, 139/255, .5
 
         MDLabel:
