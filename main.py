@@ -136,15 +136,38 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
                  font_size='17sp').open()
 
     def editIngredient(self, obj):
-        pass
-        # now = strftime('%Y-%m-%d %H:%M:%S')
-        # con = sql.connect('sweet.db')
-        # cur = con.cursor()
-        # cur.execute(
-        #     """ INSERT INTO sweet (names,price,quantity,pcs,ml,gram,comment,timeadding) VALUES (?,?,?,?,?,?,?,?)""",
-        #     (self.names, self.price, self.quantity, self.pcs, self.ml, self.gram, self.comment, now))
-        # con.commit()
-        # con.close()
+        # print(self.editNames.text)
+        # print(self.editPrice.text)
+        # print(self.editQty.text)
+        # print(self.editPcs.state)
+        # print(self.editMl.state)
+        # print(self.editGram.state)
+        # print(self.editComment.text)
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        cur.execute("""SELECT * FROM sweet""")
+        names = self.editNames.text
+        price = self.editPrice.text
+        quantity = self.editQty.text
+        pcs = self.editPcs.state
+        ml = self.editMl.state
+        gram = self.editGram.state
+        comment = self.editComment.text
+        now = strftime('%Y-%m-%d %H:%M:%S')
+        cur.execute(""" UPDATE sweet SET (names,price,quantity,pcs,ml,gram,comment,timeadding) WHERE (?,?,?,?,?,?,?,?)""",
+            (names, price, quantity, pcs, ml, gram, comment, now))
+
+        # updates = cur.fetchall()
+        # for update in updates:
+        #     self.editNames.text(update[1])
+        #     self.editPrice.text(update[2])
+        #     self.editQty.text(update[3])
+        #     self.editPcs.state(update[4])
+        #     self.editMl.state(update[5])
+        #     self.editGram.state(update[6])
+        #     self.editComment.text(update[7])
+
+
 
 
     def closeWindow1(self, obj):
