@@ -68,6 +68,23 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
         return layout
 
     def edit_button(self, obj):
+        # con = sql.connect('sweet.db')
+        # cur = con.cursor()
+        # cur.execute("""SELECT * FROM sweet""")
+        # for x in cur:
+        #     pcs = x[4]
+        #     ml = x[5]
+        #     gram = x[6]
+
+        # if self.pcs == 'down':
+        #     self.editPcs.state ='down'
+        # elif self.ml == 'down':
+        #     self.editMl.state ='down'
+        # elif self.gram == 'down':
+        #     self.editGram.state ='down'
+        # else:
+        #     self.unit = 'NA'
+        # print(self.unit)
 
         layout = BoxLayout(orientation='vertical')
         layout1 = FloatLayout()
@@ -114,12 +131,13 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
         self.pop2.open()
         return layout
 
+
+
     def delete_button(self, obj):
         con = sql.connect('sweet.db')
         cur = con.cursor()
         cur.execute("""SELECT * FROM sweet""")
-        delete = """DELETE FROM sweet WHERE names = ?"""
-        cur.execute(delete, (self.names,))
+        cur.execute("""DELETE FROM sweet WHERE names = ? and price = ? and quantity = ? and comment = ?""", (self.names, self.price, self.quantity, self.comment))
         con.commit()
 
         self.pop1.dismiss()
@@ -136,39 +154,35 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
                  font_size='17sp').open()
 
     def editIngredient(self, obj):
-        # print(self.editNames.text)
-        # print(self.editPrice.text)
-        # print(self.editQty.text)
-        # print(self.editPcs.state)
-        # print(self.editMl.state)
-        # print(self.editGram.state)
-        # print(self.editComment.text)
         con = sql.connect('sweet.db')
         cur = con.cursor()
         cur.execute("""SELECT * FROM sweet""")
-        names = self.editNames.text
-        price = self.editPrice.text
-        quantity = self.editQty.text
-        pcs = self.editPcs.state
-        ml = self.editMl.state
-        gram = self.editGram.state
-        comment = self.editComment.text
+        names = self.names
         now = strftime('%Y-%m-%d %H:%M:%S')
-        cur.execute(""" UPDATE sweet SET (names,price,quantity,pcs,ml,gram,comment,timeadding) WHERE (?,?,?,?,?,?,?,?)""",
-            (names, price, quantity, pcs, ml, gram, comment, now))
+        cur.execute(f""" UPDATE sweet SET names = '{self.editNames.text}',
+                                            price = '{self.editPrice.text}',
+                                            quantity = '{self.editQty.text}',
+                                            pcs = '{self.editPcs.state}',
+                                            ml = '{self.editMl.state}',
+                                            gram = '{self.editGram.state}',
+                                            comment = '{self.editComment.text}',
+                                            timeadding = '{now}' WHERE names = '{names}'""")
+        con.commit()
+        con.close()
 
-        # updates = cur.fetchall()
-        # for update in updates:
-        #     self.editNames.text(update[1])
-        #     self.editPrice.text(update[2])
-        #     self.editQty.text(update[3])
-        #     self.editPcs.state(update[4])
-        #     self.editMl.state(update[5])
-        #     self.editGram.state(update[6])
-        #     self.editComment.text(update[7])
+        self.pop1.dismiss()
+        self.pop2.dismiss()
+        self.pieceofcake = PieceofCake()
+        self.pieceofcake.clean_ingredient_list()
+        self.pieceofcake.load_ingredient()
 
-
-
+        Snackbar(text="[color=#ff6600]Ingredient [/color]" + str(self.names) + "[color=#ff6600] edited![/color]",
+                 snackbar_x='10dp', snackbar_y='10dp',
+                 duration=1,
+                 size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
+                 bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
+                 radius=[20],
+                 font_size='17sp').open()
 
     def closeWindow1(self, obj):
         self.pop1.dismiss()
@@ -179,7 +193,7 @@ class MyToggleButton(MDFillRoundFlatButton, MDToggleButton):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.md_bg_color = (75/255, 0/255, 130/255, .2)
-        self.background_down = (75/255, 0/255, 130/255, 1)
+        self.background_down = (255/255, 102/255, 0/255, 1)
         self.background_normal = (75/255, 0/255, 130/255, .2)
 
 
@@ -211,14 +225,26 @@ class PieceofCake(MDApp, Screen):
 
 
     def create_ingredient(self, names, price, quantity, pcs, ml, gram, comment, unit):
-
-        now = strftime('%Y-%m-%d %H:%M:%S')
         con = sql.connect('sweet.db')
         cur = con.cursor()
-        cur.execute(""" INSERT INTO sweet (names,price,quantity,pcs,ml,gram,comment,timeadding) VALUES (?,?,?,?,?,?,?,?)""",
-                    (names, price, quantity, pcs, ml, gram, comment, now))
-        con.commit()
-        con.close()
+        cur.execute(f"SELECT names FROM sweet WHERE names = '{names}'")
+        if cur.fetchone() is None:
+            now = strftime('%Y-%m-%d %H:%M:%S')
+            con = sql.connect('sweet.db')
+            cur = con.cursor()
+            cur.execute(""" INSERT INTO sweet (names,price,quantity,pcs,ml,gram,comment,timeadding) VALUES (?,?,?,?,?,?,?,?)""",
+                        (names, price, quantity, pcs, ml, gram, comment, now))
+            con.commit()
+            con.close()
+        else:
+            Snackbar(text="[color=#ff6600]Ingredient [/color]" + str(names) + "[color=#ff6600] is already exists![/color]",
+                     snackbar_x='10dp', snackbar_y='10dp',
+                     duration=1,
+                     size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
+                     bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
+                     radius=[20],
+                     font_size='17sp').open()
+
 
     def show_comment(self, comment):
         self.comment = comment
