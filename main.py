@@ -16,8 +16,6 @@ from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
 from kivymd.uix.textfield import MDTextFieldRect
-from kivymd.uix.textfield import MDTextFieldRound
-from kivy.uix.textinput import TextInput
 Window.size = (360, 770)  #(1080, 2340)
 
 
@@ -255,13 +253,6 @@ class PieceofCake(MDApp, Screen):
 
     def clean_ingredient_list(self):
         screen_manager.get_screen('ingredientList').ingredientList.clear_widgets()
-
-    # def ingredientList(self):
-    #     screen_manager.get_screen('ingredientList')
-
-    # def toCreateWindow(self):
-    #     self.screen_manager.get_screen('main')
-
 
 
     def filter_ingredients(self, ingredients, message):
