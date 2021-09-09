@@ -1,5 +1,23 @@
 #:import Snackbar kivymd.uix.snackbar.Snackbar
 
+<AddRecipe>
+    id: AddRecipe
+    elevation: 10
+    md_bg_color: 1,1,1,1
+    radius: [8]
+#    Renames: Renames
+    MDFloatLayout:
+        id: bar
+        size_hint: .01, .9
+        pos_hint: {"center_x": .02, "center_y": .5}
+        md_bg_color: 75/255, 0/255, 130/255, 1
+
+    MDDropDownItem:
+        id: drop_item
+        pos_hint: {'center_x': .5, 'center_y': .5}
+        text: 'Item 0'
+        on_release: root.select('item1')
+
 <AddIngredient>
     id: AddIngredient
     elevation: 10
@@ -82,7 +100,7 @@ MDScreen:
             pos_hint: {"center_x": .66, "center_y": .87}
             on_release:
                 root.manager. transition.direction = 'up'
-                root.manager.current = 'create'
+                root.manager.current = 'createRecipe'
         Buttons:
             text: 'List of \nRecipes'
             pos_hint: {"center_x": .87, "center_y": .87}

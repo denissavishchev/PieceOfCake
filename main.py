@@ -1,23 +1,28 @@
-from time import strftime
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivymd.app import MDApp
-from kivy.lang import Builder
-from kivymd.uix.dialog import MDDialog
-from kivy.properties import ObjectProperty
-from kivymd.uix.snackbar import Snackbar
-from kivymd.uix.button import MDFillRoundFlatButton
-from kivymd.uix.behaviors.toggle_behavior import MDToggleButton
 import sqlite3 as sql
-from kivy.metrics import dp
-from kivymd.uix.behaviors import FakeRectangularElevationBehavior
-from kivymd.uix.floatlayout import FloatLayout
-from kivymd.uix.behaviors import TouchBehavior
+from time import strftime
+
 from kivy.core.window import Window
+from kivy.lang import Builder
+from kivy.metrics import dp
+from kivy.properties import ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivymd.app import MDApp
+from kivymd.uix.behaviors import FakeRectangularElevationBehavior
+from kivymd.uix.behaviors import TouchBehavior
+from kivymd.uix.behaviors.toggle_behavior import MDToggleButton
+from kivymd.uix.button import MDFillRoundFlatButton
+from kivymd.uix.dialog import MDDialog
+from kivymd.uix.floatlayout import FloatLayout
+from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.textfield import MDTextFieldRect
+from kivy.uix.dropdown import DropDown
+
 Window.size = (360, 770)  #(1080, 2340)
 
+class AddRecipe(FakeRectangularElevationBehavior, FloatLayout, DropDown):
+    pass
 
 class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     names = ObjectProperty()
@@ -214,6 +219,7 @@ class PieceofCake(MDApp, Screen):
         screen_manager.add_widget(Builder.load_file('main.kv'))
         screen_manager.add_widget(Builder.load_file('createIng.kv'))
         screen_manager.add_widget(Builder.load_file('ingredientList.kv'))
+        screen_manager.add_widget(Builder.load_file('createRecipe.kv'))
 
         return screen_manager
 
@@ -299,7 +305,8 @@ class PieceofCake(MDApp, Screen):
 
             screen_manager.get_screen('ingredientList').ingredientList.add_widget(AddIngredient(names=names, price=price, quantity=quantity,
                                                                                                 ml=ml, gram=gram, comment=comment, unit=unit))
-
+    def add_ingredient_to_recipe(self):
+        screen_manager.get_screen('createRecipe').ingredientforRecipe.add_widget(AddRecipe())
 
 # Create the SQL
     con = sql.connect('sweet.db')
