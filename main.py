@@ -17,12 +17,17 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import FloatLayout
 from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.textfield import MDTextFieldRect
-from kivy.uix.dropdown import DropDown
+
 
 Window.size = (360, 770)  #(1080, 2340)
 
-class AddRecipe(FakeRectangularElevationBehavior, FloatLayout, DropDown):
-    pass
+class AddIngToRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
+    names = ObjectProperty()
+    unit = ObjectProperty()
+
+class AddRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
+    names = ObjectProperty()
+    unit = ObjectProperty()
 
 class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     names = ObjectProperty()
@@ -40,6 +45,7 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
     edit_ml = ObjectProperty()
     edit_gram = ObjectProperty()
     edit_comment = ObjectProperty()
+    namesA = ObjectProperty()
 
     def on_long_touch(self, *args):
         layout = BoxLayout(orientation='vertical')
@@ -211,6 +217,7 @@ class PieceofCake(MDApp, Screen):
     unit = ObjectProperty()
     message = ObjectProperty()
     create_ingredient = ObjectProperty()
+    addRemove  =ObjectProperty()
 
 
     def build(self):
@@ -220,6 +227,7 @@ class PieceofCake(MDApp, Screen):
         screen_manager.add_widget(Builder.load_file('createIng.kv'))
         screen_manager.add_widget(Builder.load_file('ingredientList.kv'))
         screen_manager.add_widget(Builder.load_file('createRecipe.kv'))
+        screen_manager.add_widget(Builder.load_file('ingSelector.kv'))
 
         return screen_manager
 
@@ -259,6 +267,9 @@ class PieceofCake(MDApp, Screen):
 
     def clean_ingredient_list(self):
         screen_manager.get_screen('ingredientList').ingredientList.clear_widgets()
+
+    def clean_ingSelector_list(self):
+        screen_manager.get_screen('ingSelector').selectorList.clear_widgets()
 
 
     def filter_ingredients(self, ingredients, message):
@@ -305,8 +316,41 @@ class PieceofCake(MDApp, Screen):
 
             screen_manager.get_screen('ingredientList').ingredientList.add_widget(AddIngredient(names=names, price=price, quantity=quantity,
                                                                                                 ml=ml, gram=gram, comment=comment, unit=unit))
-    def add_ingredient_to_recipe(self):
-        screen_manager.get_screen('createRecipe').ingredientforRecipe.add_widget(AddRecipe())
+    def add_ingredient_to_recipe(self, search = ''):
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        cur.execute("""SELECT * FROM sweet ORDER BY names ASC""")
+
+        toFilter = []
+        for x in cur:
+            toFilter.append(x)
+
+        filteredIngredients = self.filter_ingredients(toFilter, search)
+
+        screen_manager.get_screen('ingSelector').selectorList.clear_widgets()
+        for x in filteredIngredients:
+            names = x[1]
+            pcs = x[4]
+            ml = x[5]
+            gram = x[6]
+
+            if pcs == 'down':
+                unit = 'pcs'
+            elif ml == 'down':
+                unit = 'ml'
+            elif gram == 'down':
+                unit = 'gr'
+            else:
+                unit = 'NA'
+
+            screen_manager.get_screen('ingSelector').selectorList.add_widget(AddRecipe(names=names, unit=unit))
+
+    def add_ing_to_recipe(self, names, unit):
+        screen_manager.get_screen('createRecipe').ingredientforRecipe.add_widget(AddIngToRecipe(names=names, unit=unit))
+
+
+    # def remove_ing_from_recipe(self):
+    #     print('Buy')
 
 # Create the SQL
     con = sql.connect('sweet.db')
