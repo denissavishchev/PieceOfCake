@@ -24,6 +24,9 @@ Window.size = (360, 770)  #(1080, 2340)
 class AddIngToRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     names = ObjectProperty()
     unit = ObjectProperty()
+    # def get_from(self):
+    #     names1 = self.ids.qtyRe.text
+    #     print(names1)
 
 class AddRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     names = ObjectProperty()
@@ -350,6 +353,10 @@ class PieceofCake(MDApp, Screen):
 
 
     def create_recipe(self, Renames, Recomment):
+        self.get_from_addIngToRecipe = AddIngToRecipe()
+        self.get_from_addIngToRecipe.get_from()
+        names = self.ids.ingredientforRecipe.qtyRe.text
+        print(names)
         print(Renames)
         print(Recomment)
 
