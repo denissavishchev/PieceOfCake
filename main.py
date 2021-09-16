@@ -349,14 +349,37 @@ class PieceofCake(MDApp, Screen):
         screen_manager.get_screen('createRecipe').ingredientforRecipe.add_widget(AddIngToRecipe(names=names, unit=unit))
 
 
-    # def remove_ing_from_recipe(self):
-    #     print('Buy')
+    def create_recipe(self, Renames, Recomment):
+        print(Renames)
+        print(Recomment)
+
+        # con = sql.connect('sweet.db')
+        # cur = con.cursor()
+        # cur.execute(f"SELECT names FROM sweet WHERE names = '{names}'")
+        # if cur.fetchone() is None:
+        #     now = strftime('%Y-%m-%d %H:%M:%S')
+        #     con = sql.connect('sweet.db')
+        #     cur = con.cursor()
+        #     cur.execute(
+        #         """ INSERT INTO sweet (names,price,quantity,pcs,ml,gram,comment,timeadding) VALUES (?,?,?,?,?,?,?,?)""",
+        #         (names, price, quantity, pcs, ml, gram, comment, now))
+        #     con.commit()
+        #     con.close()
+        # else:
+        #     Snackbar(text="[color=#ff6600]Ingredient [/color]" + str(
+        #         names) + "[color=#ff6600] is already exists![/color]",
+        #              snackbar_x='10dp', snackbar_y='10dp',
+        #              duration=1,
+        #              size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
+        #              bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
+        #              radius=[20],
+        #              font_size='17sp').open()
 
 # Create the SQL
     con = sql.connect('sweet.db')
     cur = con.cursor()
     cur.execute("""CREATE TABLE  IF NOT EXISTS  sweet(
-            UserID integer PRIMARY KEY,
+            UserID integer PRIMARY KEY AUTOINCREMENT,
             names text,
             price text,
             quantity text,
@@ -366,6 +389,21 @@ class PieceofCake(MDApp, Screen):
             comment text,
             timeadding timestamp)
             """)
+    cur.execute("""CREATE TABLE  IF NOT EXISTS  names(
+                UserID integer PRIMARY KEY AUTOINCREMENT,
+                names text,
+                comment text,
+                timeadding timestamp)
+                """)
+    cur.execute("""CREATE TABLE  IF NOT EXISTS  ingredients(
+                UserID integer PRIMARY KEY AUTOINCREMENT,
+                ing_names text,
+                unit text,
+                quantity text,
+                namesID integer,
+                timeadding timestamp,
+                FOREIGN KEY(namesID) REFERENCES names(namesID))
+                """)
     con.commit()
     con.close()
 
