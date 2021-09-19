@@ -1,4 +1,8 @@
 #:import Snackbar kivymd.uix.snackbar.Snackbar
+#:include createRecipe.kv
+#:include ingSelector.kv
+#:include createIng.kv
+#:include ingredientList.kv
 
 <AddIngToRecipe>
     id: addIngToRecipe
@@ -10,6 +14,7 @@
     unit: unit
     MDLabel:
         id: names
+        name: 'names'
         text: str(root.names)
         markup: True
         font_size: '20sp'
@@ -23,30 +28,8 @@
         size_hint_x: .8
         theme_text_color: "Custom"
         text_color: 1, 1, 1, 1
-        pos_hint: {"center_x": .73, "center_y": .4}
+        pos_hint: {"center_x": .9, "center_y": .4}
 
-    MDFloatLayout:
-        size_hint: .2, .9
-        pos_hint: {"center_x": .55, "center_y": .4}
-        canvas:
-            Color:
-                rgb: (238/255, 238/255, 238/255, 1)
-            RoundedRectangle:
-                size: self.size
-                pos: self.pos
-                radius: [25]
-        TextInput:
-            id: qtyRe
-            hint_text: 'Qty:'
-            size_hint: 1, None
-            input_filter: 'int'
-            pos_hint: {"center_x": .5, "center_y": .5}
-            height: 55
-            cursor_color: 75/255, 0/255, 130/255, 1
-            background_color: 0, 0, 0, 0
-            multiline: False
-#            padding: 15
-            font_size: '18sp'
     ToggleButton:
         id: addRemove
         pos_hint: {"center_x": .8, "center_y": .4}
@@ -66,14 +49,14 @@
 
 
 
-
 <AddRecipe>
-#    id: AddRecipe
+    id: AddRecipe
     elevation: 10
     md_bg_color: 1,1,1,1
     radius: [8]
     names: names
     addRemove: addRemove
+    qty: qty
     MDLabel:
         id: names
         text: str(root.names)
@@ -83,19 +66,41 @@
         pos_hint: {"center_x": .4, "center_y": .4}
     MDLabel:
         id: unit
-        text: root.unit
+        text: str(root.unit)
         markup: True
-        size_hint_x: .9
+        size_hint_x: .35
         theme_text_color: "Custom"
-        text_color: 1, 1, 1, 0
-        pos_hint: {"center_x": .1, "center_y": .2}
+        text_color: 1, 1, 1, 1
+        pos_hint: {"center_x": .8, "center_y": .4}
+    MDFloatLayout:
+        size_hint: .2, .9
+        pos_hint: {"center_x": .5, "center_y": .4}
+        canvas:
+            Color:
+                rgb: (238/255, 238/255, 238/255, 1)
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius: [25]
+        TextInput:
+            id: qty
+            hint_text: 'Qty:'
+            size_hint: 1, None
+            input_filter: 'int'
+            pos_hint: {"center_x": .5, "center_y": .5}
+            height: 55
+            cursor_color: 75/255, 0/255, 130/255, 1
+            background_color: 0, 0, 0, 0
+            multiline: False
+#            padding: 15
+            font_size: '18sp'
     ToggleButton:
         id: addRemove
         pos_hint: {"center_x": .8, "center_y": .4}
         size_hint: .16, .9
         text: 'Add' if self.state == 'normal' else 'Added'
         on_release:
-            app.add_ing_to_recipe(names.text, unit.text) #if self.state == 'down' else app.remove_ing_from_recipe(names.text)
+            app.add_ing_to_recipe(names.text, unit.text, qty.text) #if self.state == 'down' else app.remove_ing_from_recipe(names.text)
             self.state = 'down'
             self.disabled = True
         background_color: (0,0,0,0)

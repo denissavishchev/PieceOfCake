@@ -5,6 +5,7 @@ from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.properties import ObjectProperty
+from kivy.properties import StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -21,16 +22,28 @@ from kivymd.uix.textfield import MDTextFieldRect
 
 Window.size = (360, 770)  #(1080, 2340)
 
+# class CreateButton(FloatLayout):
+#     names = ObjectProperty()
+#     unit = ObjectProperty()
+#     qtyRe = ObjectProperty
+
 class AddIngToRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     names = ObjectProperty()
     unit = ObjectProperty()
+    qty = ObjectProperty
     # def get_from(self):
-    #     names1 = self.ids.qtyRe.text
-    #     print(names1)
+    #     names = self.ids.names.text
+    #     unit = self.ids.unit.text
+    #     qty = self.ids.qtyRe.text
+    # #     # names = MDApp.get_running_app().root.ids.addIngToRecipe.ids.names.text
+    #     print(qty)
+    #     print(names)
+    #     print(unit)
 
 class AddRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     names = ObjectProperty()
     unit = ObjectProperty()
+    qty = ObjectProperty()
 
 class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     names = ObjectProperty()
@@ -49,6 +62,7 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
     edit_gram = ObjectProperty()
     edit_comment = ObjectProperty()
     namesA = ObjectProperty()
+    qty = ObjectProperty()
 
     def on_long_touch(self, *args):
         layout = BoxLayout(orientation='vertical')
@@ -221,6 +235,7 @@ class PieceofCake(MDApp, Screen):
     message = ObjectProperty()
     create_ingredient = ObjectProperty()
     addRemove  =ObjectProperty()
+    qty = ObjectProperty()
 
 
     def build(self):
@@ -348,17 +363,28 @@ class PieceofCake(MDApp, Screen):
 
             screen_manager.get_screen('ingSelector').selectorList.add_widget(AddRecipe(names=names, unit=unit))
 
-    def add_ing_to_recipe(self, names, unit):
-        screen_manager.get_screen('createRecipe').ingredientforRecipe.add_widget(AddIngToRecipe(names=names, unit=unit))
+    all_names = []
+    all_qtys = []
+    all_units = []
+    def add_ing_to_recipe(self, names, unit, qty):
+        screen_manager.get_screen('createRecipe').ingredientforRecipe.add_widget(AddIngToRecipe(names=names, unit=qty+' '+unit))
+
+        self.all_names.append(names)
+        self.all_qtys.append(qty)
+        self.all_units.append(unit)
+        self.names = self.all_names
+        self.qty = self.all_qtys
+        self.unit = self.all_units
 
 
     def create_recipe(self, Renames, Recomment):
-        self.get_from_addIngToRecipe = AddIngToRecipe()
-        self.get_from_addIngToRecipe.get_from()
-        names = self.ids.ingredientforRecipe.qtyRe.text
-        print(names)
         print(Renames)
+        print(self.names)
+        print(self.qty)
+        print(self.unit)
         print(Recomment)
+
+
 
         # con = sql.connect('sweet.db')
         # cur = con.cursor()
