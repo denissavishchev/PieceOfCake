@@ -384,29 +384,32 @@ class PieceofCake(MDApp, Screen):
         print(self.unit)
         print(Recomment)
 
+        now = strftime('%Y-%m-%d %H:%M:%S')
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        cur.execute(
+            """ INSERT INTO names (names,comment,timeadding) VALUES (?,?,?)""",
+            (Renames, Recomment, now))
+        con.commit()
+        # con.close()
+
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        cur.execute(f"SELECT UserID FROM names WHERE names = '{Renames}'")
+        nameID = cur.fetchall()
+        print(nameID)
 
 
-        # con = sql.connect('sweet.db')
-        # cur = con.cursor()
-        # cur.execute(f"SELECT names FROM sweet WHERE names = '{names}'")
-        # if cur.fetchone() is None:
-        #     now = strftime('%Y-%m-%d %H:%M:%S')
-        #     con = sql.connect('sweet.db')
-        #     cur = con.cursor()
-        #     cur.execute(
-        #         """ INSERT INTO sweet (names,price,quantity,pcs,ml,gram,comment,timeadding) VALUES (?,?,?,?,?,?,?,?)""",
-        #         (names, price, quantity, pcs, ml, gram, comment, now))
-        #     con.commit()
-        #     con.close()
-        # else:
-        #     Snackbar(text="[color=#ff6600]Ingredient [/color]" + str(
-        #         names) + "[color=#ff6600] is already exists![/color]",
-        #              snackbar_x='10dp', snackbar_y='10dp',
-        #              duration=1,
-        #              size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
-        #              bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
-        #              radius=[20],
-        #              font_size='17sp').open()
+        now = strftime('%Y-%m-%d %H:%M:%S')
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        # for x1, x2, x3 in self.names, self.qty, self.unit:
+        cur.execute(
+            """ INSERT INTO ingredients (ing_names, unit, quantity, namesID, timeadding) VALUES (?,?,?,?,?)""",
+            (self.names, self.qty, self.unit, nameID, now))
+        con.commit()
+        con.close()
+
 
 # Create the SQL
     con = sql.connect('sweet.db')
