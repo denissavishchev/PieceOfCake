@@ -403,10 +403,9 @@ class PieceofCake(MDApp, Screen):
         now = strftime('%Y-%m-%d %H:%M:%S')
         con = sql.connect('sweet.db')
         cur = con.cursor()
-        # for x1, x2, x3 in self.names, self.qty, self.unit:
-        cur.execute(
-            """ INSERT INTO ingredients (ing_names, unit, quantity, namesID, timeadding) VALUES (?,?,?,?,?)""",
-            (self.names, self.qty, self.unit, nameID, now))
+        # for item in self.names, self.qty, self.unit:
+        cur.executemany(""" INSERT INTO ingredients (ing_names, unit, quantity, namesID, timeadding) VALUES (?,?,?,?,?)""",
+                   (self.names,  self.unit, self.qty, nameID, now))
         con.commit()
         con.close()
 
