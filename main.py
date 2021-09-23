@@ -399,7 +399,6 @@ class PieceofCake(MDApp, Screen):
         nameID = cur.fetchall()
         print(nameID)
 
-
         now = strftime('%Y-%m-%d %H:%M:%S')
         con = sql.connect('sweet.db')
         cur = con.cursor()
