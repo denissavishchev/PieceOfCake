@@ -396,15 +396,16 @@ class PieceofCake(MDApp, Screen):
         con = sql.connect('sweet.db')
         cur = con.cursor()
         cur.execute(f"SELECT UserID FROM names WHERE names = '{Renames}'")
-        nameID = cur.fetchall()
+        nameID = []
+        nameID.append(cur.fetchall())
         print(nameID)
 
-        now = strftime('%Y-%m-%d %H:%M:%S')
+        ing_now = strftime('%Y-%m-%d %H:%M:%S')
         con = sql.connect('sweet.db')
         cur = con.cursor()
         # for item in self.names, self.qty, self.unit:
         cur.executemany(""" INSERT INTO ingredients (ing_names, unit, quantity, namesID, timeadding) VALUES (?,?,?,?,?)""",
-                   (self.names,  self.unit, self.qty, nameID, now))
+                   zip(self.names,  self.unit, self.qty, nameID, ing_now))
         con.commit()
         con.close()
 
