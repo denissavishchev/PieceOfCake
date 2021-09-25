@@ -18,6 +18,7 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import FloatLayout
 from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.textfield import MDTextFieldRect
+from kivy.uix.textinput import TextInput
 
 
 Window.size = (360, 770)  #(1080, 2340)
@@ -378,36 +379,48 @@ class PieceofCake(MDApp, Screen):
 
 
     def create_recipe(self, Renames, Recomment):
-        print(Renames)
-        print(self.names)
-        print(self.qty)
-        print(self.unit)
-        print(Recomment)
-
-        now = strftime('%Y-%m-%d %H:%M:%S')
         con = sql.connect('sweet.db')
         cur = con.cursor()
-        cur.execute(
-            """ INSERT INTO names (names,comment,timeadding) VALUES (?,?,?)""",
-            (Renames, Recomment, now))
-        con.commit()
-        # con.close()
+        cur.execute(f"SELECT names FROM names WHERE names = '{Renames}'")
+        if cur.fetchone() is None:
+            now = strftime('%Y-%m-%d %H:%M:%S')
+            con = sql.connect('sweet.db')
+            cur = con.cursor()
+            cur.execute(
+                """ INSERT INTO names (names,comment,timeadding) VALUES (?,?,?)""",
+                (Renames, Recomment, now))
+            con.commit()
+            # con.close()
 
-        con = sql.connect('sweet.db')
-        cur = con.cursor()
-        cur.execute(f"SELECT UserID FROM names WHERE names = '{Renames}'")
-        nameID = []
-        nameID.append(cur.fetchall())
-        print(nameID)
+            con = sql.connect('sweet.db')
+            cur = con.cursor()
+            cur.execute(f"SELECT UserID FROM names WHERE names = '{Renames}'")
+            nameID = []
+            m = cur.fetchone()[0]
+            for i in range(len(self.names)):
+                nameID.append(m)
 
-        ing_now = strftime('%Y-%m-%d %H:%M:%S')
-        con = sql.connect('sweet.db')
-        cur = con.cursor()
-        # for item in self.names, self.qty, self.unit:
-        cur.executemany(""" INSERT INTO ingredients (ing_names, unit, quantity, namesID, timeadding) VALUES (?,?,?,?,?)""",
-                   zip(self.names,  self.unit, self.qty, nameID, ing_now))
-        con.commit()
-        con.close()
+            con = sql.connect('sweet.db')
+            cur = con.cursor()
+            cur.executemany(""" INSERT INTO ingredients (ing_names, unit, quantity, namesID) VALUES (?,?,?,?)""",
+                            zip(self.names, self.unit, self.qty, nameID))
+            con.commit()
+            con.close()
+
+
+            # self.root.ids.Renames.text = 'Type something here'
+            screen_manager.get_screen('createRecipe').ingredientforRecipe.clear_widgets()
+
+        else:
+            Snackbar(text="[color=#ff6600]Ingredient [/color]" + str(Renames) + "[color=#ff6600] is already exists![/color]",
+                     snackbar_x='10dp', snackbar_y='10dp',
+                     duration=1,
+                     size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
+                     bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
+                     radius=[20],
+                     font_size='17sp').open()
+
+
 
 
 # Create the SQL
@@ -436,7 +449,6 @@ class PieceofCake(MDApp, Screen):
                 unit text,
                 quantity text,
                 namesID integer,
-                timeadding timestamp,
                 FOREIGN KEY(namesID) REFERENCES names(namesID))
                 """)
     con.commit()
