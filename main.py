@@ -379,46 +379,51 @@ class PieceofCake(MDApp, Screen):
 
 
     def create_recipe(self, Renames, Recomment):
-        con = sql.connect('sweet.db')
-        cur = con.cursor()
-        cur.execute(f"SELECT names FROM names WHERE names = '{Renames}'")
-        if cur.fetchone() is None:
-            now = strftime('%Y-%m-%d %H:%M:%S')
+        try:
             con = sql.connect('sweet.db')
             cur = con.cursor()
-            cur.execute(
-                """ INSERT INTO names (names,comment,timeadding) VALUES (?,?,?)""",
-                (Renames, Recomment, now))
-            con.commit()
-            # con.close()
+            cur.execute(f"SELECT names FROM names WHERE names = '{Renames}'")
+            if cur.fetchone() is None:
+                now = strftime('%Y-%m-%d %H:%M:%S')
+                con = sql.connect('sweet.db')
+                cur = con.cursor()
+                cur.execute(
+                    """ INSERT INTO names (names,comment,timeadding) VALUES (?,?,?)""",
+                    (Renames, Recomment, now))
+                con.commit()
+                # con.close()
 
-            con = sql.connect('sweet.db')
-            cur = con.cursor()
-            cur.execute(f"SELECT UserID FROM names WHERE names = '{Renames}'")
-            nameID = []
-            m = cur.fetchone()[0]
-            for i in range(len(self.names)):
-                nameID.append(m)
+                con = sql.connect('sweet.db')
+                cur = con.cursor()
+                cur.execute(f"SELECT UserID FROM names WHERE names = '{Renames}'")
+                nameID = []
+                m = cur.fetchone()[0]
+                for i in range(len(self.names)):
+                    nameID.append(m)
 
-            con = sql.connect('sweet.db')
-            cur = con.cursor()
-            cur.executemany(""" INSERT INTO ingredients (ing_names, unit, quantity, namesID) VALUES (?,?,?,?)""",
-                            zip(self.names, self.unit, self.qty, nameID))
-            con.commit()
-            con.close()
-
-
-            # self.root.ids.Renames.text = 'Type something here'
-            screen_manager.get_screen('createRecipe').ingredientforRecipe.clear_widgets()
-
-        else:
-            Snackbar(text="[color=#ff6600]Ingredient [/color]" + str(Renames) + "[color=#ff6600] is already exists![/color]",
-                     snackbar_x='10dp', snackbar_y='10dp',
-                     duration=1,
-                     size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
-                     bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
-                     radius=[20],
-                     font_size='17sp').open()
+                con = sql.connect('sweet.db')
+                cur = con.cursor()
+                cur.executemany(""" INSERT INTO ingredients (ing_names, unit, quantity, namesID) VALUES (?,?,?,?)""",
+                                zip(self.names, self.unit, self.qty, nameID))
+                con.commit()
+                con.close()
+            else:
+                Snackbar(text="[color=#ff6600]Ingredient [/color]" + str(Renames) + "[color=#ff6600] is already exists![/color]",
+                         snackbar_x='10dp', snackbar_y='10dp',
+                         duration=1,
+                         size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
+                         bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
+                         radius=[20],
+                         font_size='17sp').open()
+        except:
+            Snackbar(
+                text="[color=#ff6600]    Add at least one ingredient[/color]",
+                snackbar_x='10dp', snackbar_y='10dp',
+                duration=1,
+                size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
+                bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
+                radius=[20],
+                font_size='17sp').open()
 
 
 
