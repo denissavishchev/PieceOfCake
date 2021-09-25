@@ -417,7 +417,7 @@ class PieceofCake(MDApp, Screen):
                          font_size='17sp').open()
         except:
             Snackbar(
-                text="[color=#ff6600]    Add at least one ingredient[/color]",
+                text="[color=#ff6600]    Add at least one ingredient![/color]",
                 snackbar_x='10dp', snackbar_y='10dp',
                 duration=1,
                 size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
