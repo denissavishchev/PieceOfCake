@@ -25,9 +25,15 @@ Window.size = (360, 770)  #(1080, 2340)
 
 class CompleteRecipe(FloatLayout):
     pass
-    #     names = ObjectProperty()
-    #     unit = ObjectProperty()
-    #     qtyRe = ObjectProperty
+
+class CompleteRecipe2(FloatLayout):
+    pass
+
+class CompleteRecipe3(FloatLayout):
+    pass
+
+class CompleteRecipe4(FloatLayout):
+    pass
 
 class AddIngToRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     names = ObjectProperty()
