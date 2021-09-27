@@ -4,6 +4,82 @@
 #:include createIng.kv
 #:include ingredientList.kv
 
+<CompleteRecipe>
+    id: CompleteRecipe
+    elevation: 10
+    md_bg_color: 1,1,1,1
+    radius: [20]
+    names: names
+    addRemove: addRemove
+    unit: unit
+    canvas.before:
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            source: "image/test.png"
+            radius: [20]
+    size_hint_y: None
+#    Image:
+#        size_hint: 1, .9
+##        center: self.parent.center
+#        source: 'image/test.png'
+    MDLabel:
+        id: names
+        name: 'names'
+        text: 'Text'
+        markup: True
+        font_size: '30sp'
+        size_hint_x: .8
+        theme_text_color: "Custom"
+        text_color: 1, 0, 1, 1
+        pos_hint: {"center_x": .6, "center_y": .5}
+
+    MDLabel:
+        id: unit
+        text: 'Unit'
+        markup: True
+        font_size: '25sp'
+        size_hint_x: .8
+        theme_text_color: "Custom"
+        text_color: 1, 0, 1, 1
+        pos_hint: {"center_x": .9, "center_y": .5}
+
+    ToggleButton:
+        id: addRemove
+        pos_hint: {"center_x": .9, "center_y": .5}
+        size_hint: .16, .9
+        text: 'Remove' if self.state == 'normal' else 'Rmd'
+        on_release:
+            addIngToRecipe.parent.remove_widget(addIngToRecipe)
+        background_color: (0,0,0,0)
+        background_normal: ''
+        canvas.before:
+            Color:
+                rgba: (75/255, 0/255, 130/255, 1) if self.state == 'normal' else (75/255, 0/255, 130/255, 1)
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius: [18]
+
+    ToggleButton:
+        id: Calk
+        pos_hint: {"center_x": .1, "center_y": .5}
+        size_hint: .16, .9
+        text: 'Remove' if self.state == 'normal' else 'Rmd'
+        on_release:
+            addIngToRecipe.parent.remove_widget(addIngToRecipe)
+        background_color: (0,0,0,0)
+        background_normal: ''
+        canvas.before:
+            Color:
+                rgba: (75/255, 0/255, 130/255, 1) if self.state == 'normal' else (75/255, 0/255, 130/255, 1)
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius: [18]
+
+
+
 <AddIngToRecipe>
     id: addIngToRecipe
     elevation: 10
@@ -217,7 +293,7 @@ MDScreen:
                 size_hint_y: None
                 padding: 15, 10
                 spacing: 15, 20
-
+                CompleteRecipe:
 
 <Buttons@MDFillRoundFlatButton>
 

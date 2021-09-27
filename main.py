@@ -23,10 +23,11 @@ from kivy.uix.textinput import TextInput
 
 Window.size = (360, 770)  #(1080, 2340)
 
-# class CreateButton(FloatLayout):
-#     names = ObjectProperty()
-#     unit = ObjectProperty()
-#     qtyRe = ObjectProperty
+class CompleteRecipe(FloatLayout):
+    pass
+    #     names = ObjectProperty()
+    #     unit = ObjectProperty()
+    #     qtyRe = ObjectProperty
 
 class AddIngToRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     names = ObjectProperty()
