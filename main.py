@@ -18,22 +18,145 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import FloatLayout
 from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.textfield import MDTextFieldRect
-from kivy.uix.textinput import TextInput
+from kivymd.uix.label import MDLabel
 
 
 Window.size = (360, 770)  #(1080, 2340)
 
-class CompleteRecipe(FloatLayout):
-    pass
+class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
+    Renames = ObjectProperty()
 
-class CompleteRecipe2(FloatLayout):
-    pass
+    def on_long_touch(self, *args):
+        layout = BoxLayout(orientation='vertical')
+        layout1 = FloatLayout()
 
-class CompleteRecipe3(FloatLayout):
-    pass
+        self.editButton = MDFillRoundFlatButton(text='Edit', pos_hint={'center_x': .18, 'center_y': .6}, size_hint=(.3, .3),
+                                                 theme_text_color='Custom',
+                                                 text_color=(0, 1, 0, 1),
+                                                 on_release=self.edit_button)
+        layout1.add_widget(self.editButton)
+        self.deleteButton = MDFillRoundFlatButton(text='Delete', pos_hint={'center_x': .55, 'center_y': .6},
+                                                size_hint=(.3, .3),
+                                                theme_text_color='Custom',
+                                                text_color=(0, 1, 0, 1),
+                                                on_release=self.delete_button)
+        layout1.add_widget(self.deleteButton)
+        self.closeButton = MDFillRoundFlatButton(text='X', pos_hint={'center_x': .85, 'center_y': .6},
+                                                  size_hint=(.1, .3),
+                                                  theme_text_color='Custom',
+                                                  text_color=(0, 1, 0, 1),
+                                                  on_release=self.closeWindow1)
+        layout1.add_widget(self.closeButton)
+        layout.add_widget(layout1)
 
-class CompleteRecipe4(FloatLayout):
-    pass
+        self.pop1 = Popup(title=self.Renames, background_color='white',
+                         content=layout,
+                         size_hint=(None, None), size=(600, 300), pos_hint={'center_x': .5, 'center_y': .5})
+        self.pop1.open()
+        return layout
+
+    def edit_button(self, obj):
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        cur.execute("""SELECT * FROM names""")
+        for x in cur:
+            self.comment = x[2]
+
+
+        layout = BoxLayout(orientation='vertical')
+        layout1 = FloatLayout()
+
+        self.editNames = MDTextFieldRect(text=self.Renames, pos=(100, 1000), size_hint=(.95, .07), multiline=False)
+        layout1.add_widget(self.editNames)
+
+        # self.editPrice = MDTextFieldRect(text=self.comment, pos=(100, 920), size_hint=(.45, .07), multiline=False)
+        # layout1.add_widget(self.editPrice)
+
+        # self.editQty = MDTextFieldRect(text=self.quantity, pos=(100, 840), size_hint=(.45, .07), multiline=False)
+        # layout1.add_widget(self.editQty)
+
+        self.editComment = MDTextFieldRect(text=self.comment, pos=(100, 600), size_hint=(.95, .3))
+        layout1.add_widget(self.editComment)
+
+        self.editButton = MDFillRoundFlatButton(text='Edit', pos_hint={'center_x': .45, 'center_y': .2},
+                                                 size_hint=(.3, .1),
+                                                 theme_text_color='Custom',
+                                                 text_color=(0, 1, 0, 1),
+                                                 on_release=self.editIngredient)
+        layout1.add_widget(self.editButton)
+
+        self.close2Button = MDFillRoundFlatButton(text='X', pos_hint={'center_x': .9, 'center_y': .2},
+                                                size_hint=(.1, .1),
+                                                theme_text_color='Custom',
+                                                text_color=(0, 1, 0, 1),
+                                                on_press=self.closeWindow1,
+                                                on_release=self.closeWindow2)
+        layout1.add_widget(self.close2Button)
+        layout.add_widget(layout1)
+
+        self.pop2 = Popup(title=self.Renames, background_color='white',
+                         content=layout,
+                         size_hint=(None, None), size=(600, 800), pos_hint={'center_x': .5, 'center_y': .5}, auto_dismiss=False)
+        self.pop2.open()
+        return layout
+
+
+
+    def delete_button(self, obj):
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        cur.execute("""SELECT * FROM sweet""")
+        cur.execute("""DELETE FROM sweet WHERE names = ? and price = ? and quantity = ? and comment = ?""", (self.names, self.price, self.quantity, self.comment))
+        con.commit()
+
+        self.pop1.dismiss()
+        self.pieceofcake = PieceofCake()
+        self.pieceofcake.clean_ingredient_list()
+        self.pieceofcake.load_ingredient()
+
+        Snackbar(text="[color=#ff6600]Ingredient [/color]" + str(self.names) + "[color=#ff6600] removed![/color]",
+                 snackbar_x='10dp', snackbar_y='10dp',
+                 duration=1,
+                 size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
+                 bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
+                 radius=[20],
+                 font_size='17sp').open()
+
+    def editIngredient(self, obj):
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        cur.execute("""SELECT * FROM sweet""")
+        names = self.names
+        now = strftime('%Y-%m-%d %H:%M:%S')
+        cur.execute(f""" UPDATE sweet SET names = '{self.editNames.text}',
+                                            price = '{self.editPrice.text}',
+                                            quantity = '{self.editQty.text}',
+                                            pcs = '{self.editPcs.state}',
+                                            ml = '{self.editMl.state}',
+                                            gram = '{self.editGram.state}',
+                                            comment = '{self.editComment.text}',
+                                            timeadding = '{now}' WHERE names = '{names}'""")
+        con.commit()
+        con.close()
+
+        self.pop1.dismiss()
+        self.pop2.dismiss()
+        self.pieceofcake = PieceofCake()
+        self.pieceofcake.clean_ingredient_list()
+        self.pieceofcake.load_ingredient()
+
+        Snackbar(text="[color=#ff6600]Ingredient [/color]" + str(self.names) + "[color=#ff6600] edited![/color]",
+                 snackbar_x='10dp', snackbar_y='10dp',
+                 duration=1,
+                 size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
+                 bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
+                 radius=[20],
+                 font_size='17sp').open()
+
+    def closeWindow1(self, obj):
+        self.pop1.dismiss()
+    def closeWindow2(self, obj):
+        self.pop2.dismiss()
 
 class AddIngToRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     names = ObjectProperty()
@@ -244,6 +367,7 @@ class PieceofCake(MDApp, Screen):
     create_ingredient = ObjectProperty()
     addRemove  =ObjectProperty()
     qty = ObjectProperty()
+    Renames = ObjectProperty()
 
 
     def build(self):
@@ -254,6 +378,7 @@ class PieceofCake(MDApp, Screen):
         screen_manager.add_widget(Builder.load_file('ingredientList.kv'))
         screen_manager.add_widget(Builder.load_file('createRecipe.kv'))
         screen_manager.add_widget(Builder.load_file('ingSelector.kv'))
+        screen_manager.add_widget(Builder.load_file('recipeList.kv'))
 
         return screen_manager
 
@@ -432,10 +557,46 @@ class PieceofCake(MDApp, Screen):
                 radius=[20],
                 font_size='17sp').open()
 
+    def load_recipes(self):
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        cur.execute("""SELECT * FROM names ORDER BY names ASC""")
+
+        for x in cur:
+            Renames = x[1]
+            screen_manager.get_screen('recipeList').recipeList.add_widget(CompleteRecipe(Renames=Renames))
+
+    def show_recipe(self, Renames):
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        cur.execute(f"""SELECT * FROM names WHERE names = '{Renames}'""")
+
+        for x in cur:
+            UserID = x[0]
+            Renames = x[1]
+            Recomment = x[2]
+
+            print(UserID)
+            print(Renames)
+            print(Recomment)
+
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        cur.execute(f"""SELECT * FROM ingredients WHERE namesID = '{UserID}'""")
+
+        for y in cur:
+            ing_name = y[1]
+            unit = y[2]
+            qty = y[3]
+
+            print(ing_name)
+            print(unit)
+            print(qty)
 
 
 
-# Create the SQL
+
+    # Create the SQL
     con = sql.connect('sweet.db')
     cur = con.cursor()
     cur.execute("""CREATE TABLE  IF NOT EXISTS  sweet(
