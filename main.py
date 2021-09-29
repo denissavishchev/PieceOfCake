@@ -18,10 +18,13 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import FloatLayout
 from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.textfield import MDTextFieldRect
-from kivymd.uix.label import MDLabel
+from kivy.uix.scrollview import ScrollView
 
+Window.size = (360, 770)  # (1080, 2340)
 
-Window.size = (360, 770)  #(1080, 2340)
+class CustomPopup(Popup, FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
+    contentBox = ObjectProperty()
+    Rcomment = ObjectProperty()
 
 class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     Renames = ObjectProperty()
@@ -30,28 +33,29 @@ class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavio
         layout = BoxLayout(orientation='vertical')
         layout1 = FloatLayout()
 
-        self.editButton = MDFillRoundFlatButton(text='Edit', pos_hint={'center_x': .18, 'center_y': .6}, size_hint=(.3, .3),
-                                                 theme_text_color='Custom',
-                                                 text_color=(0, 1, 0, 1),
-                                                 on_release=self.edit_button)
-        layout1.add_widget(self.editButton)
-        self.deleteButton = MDFillRoundFlatButton(text='Delete', pos_hint={'center_x': .55, 'center_y': .6},
+        self.editButton = MDFillRoundFlatButton(text='Edit', pos_hint={'center_x': .18, 'center_y': .6},
                                                 size_hint=(.3, .3),
                                                 theme_text_color='Custom',
                                                 text_color=(0, 1, 0, 1),
-                                                on_release=self.delete_button)
-        layout1.add_widget(self.deleteButton)
-        self.closeButton = MDFillRoundFlatButton(text='X', pos_hint={'center_x': .85, 'center_y': .6},
-                                                  size_hint=(.1, .3),
+                                                on_release=self.edit_button)
+        layout1.add_widget(self.editButton)
+        self.deleteButton = MDFillRoundFlatButton(text='Delete', pos_hint={'center_x': .55, 'center_y': .6},
+                                                  size_hint=(.3, .3),
                                                   theme_text_color='Custom',
                                                   text_color=(0, 1, 0, 1),
-                                                  on_release=self.closeWindow1)
+                                                  on_release=self.delete_button)
+        layout1.add_widget(self.deleteButton)
+        self.closeButton = MDFillRoundFlatButton(text='X', pos_hint={'center_x': .85, 'center_y': .6},
+                                                 size_hint=(.1, .3),
+                                                 theme_text_color='Custom',
+                                                 text_color=(0, 1, 0, 1),
+                                                 on_release=self.closeWindow1)
         layout1.add_widget(self.closeButton)
         layout.add_widget(layout1)
 
         self.pop1 = Popup(title=self.Renames, background_color='white',
-                         content=layout,
-                         size_hint=(None, None), size=(600, 300), pos_hint={'center_x': .5, 'center_y': .5})
+                          content=layout,
+                          size_hint=(None, None), size=(600, 300), pos_hint={'center_x': .5, 'center_y': .5})
         self.pop1.open()
         return layout
 
@@ -61,7 +65,6 @@ class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavio
         cur.execute("""SELECT * FROM names""")
         for x in cur:
             self.comment = x[2]
-
 
         layout = BoxLayout(orientation='vertical')
         layout1 = FloatLayout()
@@ -79,34 +82,34 @@ class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavio
         layout1.add_widget(self.editComment)
 
         self.editButton = MDFillRoundFlatButton(text='Edit', pos_hint={'center_x': .45, 'center_y': .2},
-                                                 size_hint=(.3, .1),
-                                                 theme_text_color='Custom',
-                                                 text_color=(0, 1, 0, 1),
-                                                 on_release=self.editIngredient)
+                                                size_hint=(.3, .1),
+                                                theme_text_color='Custom',
+                                                text_color=(0, 1, 0, 1),
+                                                on_release=self.editIngredient)
         layout1.add_widget(self.editButton)
 
         self.close2Button = MDFillRoundFlatButton(text='X', pos_hint={'center_x': .9, 'center_y': .2},
-                                                size_hint=(.1, .1),
-                                                theme_text_color='Custom',
-                                                text_color=(0, 1, 0, 1),
-                                                on_press=self.closeWindow1,
-                                                on_release=self.closeWindow2)
+                                                  size_hint=(.1, .1),
+                                                  theme_text_color='Custom',
+                                                  text_color=(0, 1, 0, 1),
+                                                  on_press=self.closeWindow1,
+                                                  on_release=self.closeWindow2)
         layout1.add_widget(self.close2Button)
         layout.add_widget(layout1)
 
         self.pop2 = Popup(title=self.Renames, background_color='white',
-                         content=layout,
-                         size_hint=(None, None), size=(600, 800), pos_hint={'center_x': .5, 'center_y': .5}, auto_dismiss=False)
+                          content=layout,
+                          size_hint=(None, None), size=(600, 800), pos_hint={'center_x': .5, 'center_y': .5},
+                          auto_dismiss=False)
         self.pop2.open()
         return layout
-
-
 
     def delete_button(self, obj):
         con = sql.connect('sweet.db')
         cur = con.cursor()
         cur.execute("""SELECT * FROM sweet""")
-        cur.execute("""DELETE FROM sweet WHERE names = ? and price = ? and quantity = ? and comment = ?""", (self.names, self.price, self.quantity, self.comment))
+        cur.execute("""DELETE FROM sweet WHERE names = ? and price = ? and quantity = ? and comment = ?""",
+                    (self.names, self.price, self.quantity, self.comment))
         con.commit()
 
         self.pop1.dismiss()
@@ -155,8 +158,10 @@ class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavio
 
     def closeWindow1(self, obj):
         self.pop1.dismiss()
+
     def closeWindow2(self, obj):
         self.pop2.dismiss()
+
 
 class AddIngToRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     names = ObjectProperty()
@@ -171,10 +176,12 @@ class AddIngToRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavio
     #     print(names)
     #     print(unit)
 
+
 class AddRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     names = ObjectProperty()
     unit = ObjectProperty()
     qty = ObjectProperty()
+
 
 class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     names = ObjectProperty()
@@ -199,28 +206,29 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
         layout = BoxLayout(orientation='vertical')
         layout1 = FloatLayout()
 
-        self.editButton = MDFillRoundFlatButton(text='Edit', pos_hint={'center_x': .18, 'center_y': .6}, size_hint=(.3, .3),
-                                                 theme_text_color='Custom',
-                                                 text_color=(0, 1, 0, 1),
-                                                 on_release=self.edit_button)
-        layout1.add_widget(self.editButton)
-        self.deleteButton = MDFillRoundFlatButton(text='Delete', pos_hint={'center_x': .55, 'center_y': .6},
+        self.editButton = MDFillRoundFlatButton(text='Edit', pos_hint={'center_x': .18, 'center_y': .6},
                                                 size_hint=(.3, .3),
                                                 theme_text_color='Custom',
                                                 text_color=(0, 1, 0, 1),
-                                                on_release=self.delete_button)
-        layout1.add_widget(self.deleteButton)
-        self.closeButton = MDFillRoundFlatButton(text='X', pos_hint={'center_x': .85, 'center_y': .6},
-                                                  size_hint=(.1, .3),
+                                                on_release=self.edit_button)
+        layout1.add_widget(self.editButton)
+        self.deleteButton = MDFillRoundFlatButton(text='Delete', pos_hint={'center_x': .55, 'center_y': .6},
+                                                  size_hint=(.3, .3),
                                                   theme_text_color='Custom',
                                                   text_color=(0, 1, 0, 1),
-                                                  on_release=self.closeWindow1)
+                                                  on_release=self.delete_button)
+        layout1.add_widget(self.deleteButton)
+        self.closeButton = MDFillRoundFlatButton(text='X', pos_hint={'center_x': .85, 'center_y': .6},
+                                                 size_hint=(.1, .3),
+                                                 theme_text_color='Custom',
+                                                 text_color=(0, 1, 0, 1),
+                                                 on_release=self.closeWindow1)
         layout1.add_widget(self.closeButton)
         layout.add_widget(layout1)
 
         self.pop1 = Popup(title=self.names, background_color='white',
-                         content=layout,
-                         size_hint=(None, None), size=(600, 300), pos_hint={'center_x': .5, 'center_y': .5})
+                          content=layout,
+                          size_hint=(None, None), size=(600, 300), pos_hint={'center_x': .5, 'center_y': .5})
         self.pop1.open()
         return layout
 
@@ -267,34 +275,34 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
         layout1.add_widget(self.editComment)
 
         self.editButton = MDFillRoundFlatButton(text='Edit', pos_hint={'center_x': .45, 'center_y': .2},
-                                                 size_hint=(.3, .1),
-                                                 theme_text_color='Custom',
-                                                 text_color=(0, 1, 0, 1),
-                                                 on_release=self.editIngredient)
+                                                size_hint=(.3, .1),
+                                                theme_text_color='Custom',
+                                                text_color=(0, 1, 0, 1),
+                                                on_release=self.editIngredient)
         layout1.add_widget(self.editButton)
 
         self.close2Button = MDFillRoundFlatButton(text='X', pos_hint={'center_x': .9, 'center_y': .2},
-                                                size_hint=(.1, .1),
-                                                theme_text_color='Custom',
-                                                text_color=(0, 1, 0, 1),
-                                                on_press=self.closeWindow1,
-                                                on_release=self.closeWindow2)
+                                                  size_hint=(.1, .1),
+                                                  theme_text_color='Custom',
+                                                  text_color=(0, 1, 0, 1),
+                                                  on_press=self.closeWindow1,
+                                                  on_release=self.closeWindow2)
         layout1.add_widget(self.close2Button)
         layout.add_widget(layout1)
 
         self.pop2 = Popup(title=self.names, background_color='white',
-                         content=layout,
-                         size_hint=(None, None), size=(600, 800), pos_hint={'center_x': .5, 'center_y': .5}, auto_dismiss=False)
+                          content=layout,
+                          size_hint=(None, None), size=(600, 800), pos_hint={'center_x': .5, 'center_y': .5},
+                          auto_dismiss=False)
         self.pop2.open()
         return layout
-
-
 
     def delete_button(self, obj):
         con = sql.connect('sweet.db')
         cur = con.cursor()
         cur.execute("""SELECT * FROM sweet""")
-        cur.execute("""DELETE FROM sweet WHERE names = ? and price = ? and quantity = ? and comment = ?""", (self.names, self.price, self.quantity, self.comment))
+        cur.execute("""DELETE FROM sweet WHERE names = ? and price = ? and quantity = ? and comment = ?""",
+                    (self.names, self.price, self.quantity, self.comment))
         con.commit()
 
         self.pop1.dismiss()
@@ -343,15 +351,17 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
 
     def closeWindow1(self, obj):
         self.pop1.dismiss()
+
     def closeWindow2(self, obj):
         self.pop2.dismiss()
+
 
 class MyToggleButton(MDFillRoundFlatButton, MDToggleButton):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.md_bg_color = (75/255, 0/255, 130/255, .2)
-        self.background_down = (255/255, 102/255, 0/255, 1)
-        self.background_normal = (75/255, 0/255, 130/255, .2)
+        self.md_bg_color = (75 / 255, 0 / 255, 130 / 255, .2)
+        self.background_down = (255 / 255, 102 / 255, 0 / 255, 1)
+        self.background_normal = (75 / 255, 0 / 255, 130 / 255, .2)
 
 
 class PieceofCake(MDApp, Screen):
@@ -365,11 +375,12 @@ class PieceofCake(MDApp, Screen):
     unit = ObjectProperty()
     message = ObjectProperty()
     create_ingredient = ObjectProperty()
-    addRemove  =ObjectProperty()
+    addRemove = ObjectProperty()
     qty = ObjectProperty()
     Renames = ObjectProperty()
+    Recomment = ObjectProperty()
 
-
+    popup = None
     def build(self):
         global screen_manager
         screen_manager = ScreenManager()
@@ -386,7 +397,6 @@ class PieceofCake(MDApp, Screen):
         pass
         # screen_manager.get_screen('main').date.text = 'Hello'
 
-
     def create_ingredient(self, names, price, quantity, pcs, ml, gram, comment, unit):
         con = sql.connect('sweet.db')
         cur = con.cursor()
@@ -395,33 +405,33 @@ class PieceofCake(MDApp, Screen):
             now = strftime('%Y-%m-%d %H:%M:%S')
             con = sql.connect('sweet.db')
             cur = con.cursor()
-            cur.execute(""" INSERT INTO sweet (names,price,quantity,pcs,ml,gram,comment,timeadding) VALUES (?,?,?,?,?,?,?,?)""",
-                        (names, price, quantity, pcs, ml, gram, comment, now))
+            cur.execute(
+                """ INSERT INTO sweet (names,price,quantity,pcs,ml,gram,comment,timeadding) VALUES (?,?,?,?,?,?,?,?)""",
+                (names, price, quantity, pcs, ml, gram, comment, now))
             con.commit()
             con.close()
         else:
-            Snackbar(text="[color=#ff6600]Ingredient [/color]" + str(names) + "[color=#ff6600] is already exists![/color]",
-                     snackbar_x='10dp', snackbar_y='10dp',
-                     duration=1,
-                     size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
-                     bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
-                     radius=[20],
-                     font_size='17sp').open()
-
+            Snackbar(
+                text="[color=#ff6600]Ingredient [/color]" + str(names) + "[color=#ff6600] is already exists![/color]",
+                snackbar_x='10dp', snackbar_y='10dp',
+                duration=1,
+                size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
+                bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
+                radius=[20],
+                font_size='17sp').open()
 
     def show_comment(self, comment):
         self.comment = comment
         self.dialog = MDDialog(
-            title=str(comment), on_touch_down=MDDialog.dismiss, md_bg_color=(72/255, 61/255, 139/255, .9), radius=[20])
+            title=str(comment), on_touch_down=MDDialog.dismiss, md_bg_color=(72 / 255, 61 / 255, 139 / 255, .9),
+            radius=[20])
         self.dialog.open()
-
 
     def clean_ingredient_list(self):
         screen_manager.get_screen('ingredientList').ingredientList.clear_widgets()
 
     def clean_ingSelector_list(self):
         screen_manager.get_screen('ingSelector').selectorList.clear_widgets()
-
 
     def filter_ingredients(self, ingredients, message):
         if message == '':
@@ -435,7 +445,7 @@ class PieceofCake(MDApp, Screen):
 
         return filteredIngredients
 
-    def load_ingredient(self, search = ''):
+    def load_ingredient(self, search=''):
         con = sql.connect('sweet.db')
         cur = con.cursor()
         cur.execute("""SELECT * FROM sweet ORDER BY timeadding DESC""")
@@ -465,9 +475,11 @@ class PieceofCake(MDApp, Screen):
             else:
                 unit = 'NA'
 
-            screen_manager.get_screen('ingredientList').ingredientList.add_widget(AddIngredient(names=names, price=price, quantity=quantity,
-                                                                                                ml=ml, gram=gram, comment=comment, unit=unit))
-    def add_ingredient_to_recipe(self, search = ''):
+            screen_manager.get_screen('ingredientList').ingredientList.add_widget(
+                AddIngredient(names=names, price=price, quantity=quantity,
+                              ml=ml, gram=gram, comment=comment, unit=unit))
+
+    def add_ingredient_to_recipe(self, search=''):
         con = sql.connect('sweet.db')
         cur = con.cursor()
         cur.execute("""SELECT * FROM sweet ORDER BY names ASC""")
@@ -499,8 +511,10 @@ class PieceofCake(MDApp, Screen):
     all_names = []
     all_qtys = []
     all_units = []
+
     def add_ing_to_recipe(self, names, unit, qty):
-        screen_manager.get_screen('createRecipe').ingredientforRecipe.add_widget(AddIngToRecipe(names=names, unit=qty+' '+unit))
+        screen_manager.get_screen('createRecipe').ingredientforRecipe.add_widget(
+            AddIngToRecipe(names=names, unit=qty + ' ' + unit))
 
         self.all_names.append(names)
         self.all_qtys.append(qty)
@@ -508,7 +522,6 @@ class PieceofCake(MDApp, Screen):
         self.names = self.all_names
         self.qty = self.all_qtys
         self.unit = self.all_units
-
 
     def create_recipe(self, Renames, Recomment):
         try:
@@ -540,7 +553,8 @@ class PieceofCake(MDApp, Screen):
                 con.commit()
                 con.close()
             else:
-                Snackbar(text="[color=#ff6600]Ingredient [/color]" + str(Renames) + "[color=#ff6600] is already exists![/color]",
+                Snackbar(text="[color=#ff6600]Ingredient [/color]" + str(
+                    Renames) + "[color=#ff6600] is already exists![/color]",
                          snackbar_x='10dp', snackbar_y='10dp',
                          duration=1,
                          size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
@@ -558,6 +572,7 @@ class PieceofCake(MDApp, Screen):
                 font_size='17sp').open()
 
     def load_recipes(self):
+
         con = sql.connect('sweet.db')
         cur = con.cursor()
         cur.execute("""SELECT * FROM names ORDER BY names ASC""")
@@ -593,8 +608,7 @@ class PieceofCake(MDApp, Screen):
             print(unit)
             print(qty)
 
-
-
+        self.popup = CustomPopup(title=Renames).open()
 
     # Create the SQL
     con = sql.connect('sweet.db')
@@ -629,4 +643,4 @@ class PieceofCake(MDApp, Screen):
 
 
 if __name__ == '__main__':
-    PieceofCake(). run()
+    PieceofCake().run()

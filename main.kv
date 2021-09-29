@@ -4,13 +4,54 @@
 #:include createIng.kv
 #:include ingredientList.kv
 
+<CustomPopup>:
+    id: popup
+    auto_dismiss: False
+    contentBox: content_box
+#    Recomment: Recomment
+    BoxLayout:
+        id: content_box
+        orientation: "vertical"
+        content: content_text
+
+        ScrollView:
+            effect_cls: "ScrollEffect" # prevents overscrolling
+            Label:
+                id: content_text
+                size_hint_y: None
+                height: self.texture_size[1]
+                text: 'Hello' * 500
+                text_size: (self.width-20), None
+                line_height: 1.5
+                valign: "top"
+
+        Widget:
+            size_hint_y: .05
+
+        ScrollView:
+            effect_cls: "ScrollEffect" # prevents overscrolling
+            Label:
+                id: content_text
+                size_hint_y: None
+                height: self.texture_size[1]
+                text: 'Lorem '* 500
+                text_size: (self.width-20), None
+                line_height: 1.5
+                valign: "top"
+
+        Button:
+            text: "Close"
+            size_hint_y: None
+            height: "40dp"
+            on_press: root.dismiss()
+
 <CompleteRecipe>
     id: CompleteRecipe
     elevation: 1
     md_bg_color: 1,1,1,1
     radius: [20]
 #    Renames: Renames
-
+    orientation: "vertical"
 
     MDFloatLayout:
         id: bar
