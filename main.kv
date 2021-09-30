@@ -8,7 +8,7 @@
     id: popup
     auto_dismiss: False
     contentBox: content_box
-#    Recomment: Recomment
+#    Renames: Renames
     BoxLayout:
         id: content_box
         orientation: "vertical"
@@ -20,7 +20,7 @@
                 id: content_text
                 size_hint_y: None
                 height: self.texture_size[1]
-                text: 'Hello' * 500
+                text: 'Ingredients:\n' + str(root.unit)
                 text_size: (self.width-20), None
                 line_height: 1.5
                 valign: "top"
@@ -34,7 +34,7 @@
                 id: content_text
                 size_hint_y: None
                 height: self.texture_size[1]
-                text: 'Lorem '* 500
+                text: 'Comment:\n' + str(root.Recomment)
                 text_size: (self.width-20), None
                 line_height: 1.5
                 valign: "top"

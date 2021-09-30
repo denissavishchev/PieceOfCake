@@ -24,7 +24,39 @@ Window.size = (360, 770)  # (1080, 2340)
 
 class CustomPopup(Popup, FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     contentBox = ObjectProperty()
-    Rcomment = ObjectProperty()
+    Renames = ObjectProperty()
+    Recomment = ObjectProperty()
+    unit = ObjectProperty()
+
+    def show_recipe1(self, Renames):
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        cur.execute(f"""SELECT * FROM names WHERE names = '{Renames}'""")
+
+        for x in cur:
+            UserID = x[0]
+            Renames = x[1]
+            Recomment = x[2]
+
+            # print(UserID)
+            # print(Renames)
+            # print(Recomment)
+
+        con = sql.connect('sweet.db')
+        cur = con.cursor()
+        cur.execute(f"""SELECT * FROM ingredients WHERE namesID = '{UserID}'""")
+
+        for y in cur:
+            ing_name = y[1]
+            unit1 = y[2]
+            qty = y[3]
+            #
+            # print(ing_name)
+            # print(unit1)
+            # print(qty)
+            unit = ing_name+'  '+ qty+'  '+unit1
+            print(unit)
+        self.popup = CustomPopup(title=Renames, unit=unit, Recomment=Recomment).open()
 
 class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     Renames = ObjectProperty()
@@ -582,33 +614,9 @@ class PieceofCake(MDApp, Screen):
             screen_manager.get_screen('recipeList').recipeList.add_widget(CompleteRecipe(Renames=Renames))
 
     def show_recipe(self, Renames):
-        con = sql.connect('sweet.db')
-        cur = con.cursor()
-        cur.execute(f"""SELECT * FROM names WHERE names = '{Renames}'""")
-
-        for x in cur:
-            UserID = x[0]
-            Renames = x[1]
-            Recomment = x[2]
-
-            print(UserID)
-            print(Renames)
-            print(Recomment)
-
-        con = sql.connect('sweet.db')
-        cur = con.cursor()
-        cur.execute(f"""SELECT * FROM ingredients WHERE namesID = '{UserID}'""")
-
-        for y in cur:
-            ing_name = y[1]
-            unit = y[2]
-            qty = y[3]
-
-            print(ing_name)
-            print(unit)
-            print(qty)
-
-        self.popup = CustomPopup(title=Renames).open()
+        custom_popup = CustomPopup()
+        show_rec = custom_popup.show_recipe1(Renames)
+        # print(show_rec)
 
     # Create the SQL
     con = sql.connect('sweet.db')
