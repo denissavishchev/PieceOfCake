@@ -14,14 +14,19 @@
         content: content_text
         size_hint: .01, 1
 
-
+        MDLabel:
+            text: '  Ingredients:'
+            size_hint: .9, .1
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1
+            font_size: '20sp'
         ScrollView:
             effect_cls: "ScrollEffect" # prevents overscrolling
             MDLabel:
                 id: content_text
                 size_hint_y: None
                 height: self.texture_size[1]
-                text: 'Ingredients:\n' + str(root.unit)
+                text: str(root.unit)
                 text_size: (self.width-40), None
                 font_size: '18sp'
                 line_height: 1.2
@@ -36,10 +41,15 @@
                         size: self.size
                         radius: [20]
                         source: 'image/1.png'
+#        Widget:
+#            size_hint_y: .01
 
-        Widget:
-            size_hint_y: .05
-
+        MDLabel:
+            text: '  Comment:'
+            size_hint: .9, .1
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1
+            font_size: '20sp'
         ScrollView:
             effect_cls: "ScrollEffect" # prevents overscrolling
             Label:
