@@ -46,17 +46,19 @@ class CustomPopup(Popup, FakeRectangularElevationBehavior, FloatLayout, TouchBeh
         cur = con.cursor()
         cur.execute(f"""SELECT * FROM ingredients WHERE namesID = '{UserID}'""")
 
+        unit = []
         for y in cur:
             ing_name = y[1]
             unit1 = y[2]
             qty = y[3]
-            #
             # print(ing_name)
             # print(unit1)
             # print(qty)
-            unit = ing_name+'  '+ qty+'  '+unit1
-            print(unit)
-        self.popup = CustomPopup(title=Renames, unit=unit, Recomment=Recomment).open()
+
+            unitx = ing_name+'  '+ qty+'  '+unit1
+            unit.append(unitx)
+            all_units = ('\n'.join(unit))
+        self.popup = CustomPopup(title=Renames, unit=all_units, Recomment=Recomment).open()
 
 class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     Renames = ObjectProperty()
