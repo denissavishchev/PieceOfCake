@@ -57,7 +57,8 @@ class CustomPopup(Popup, FakeRectangularElevationBehavior, FloatLayout, TouchBeh
             unitx = ing_name+'  '+ qty+'  '+unit1
             unit.append(unitx)
             all_units = ('\n'.join(unit))
-        self.popup = CustomPopup(title=Renames, title_size='25sp', title_color=[200/255, 199/255, 234/255, 1], unit=all_units, Recomment=Recomment).open()
+        self.popup = CustomPopup(title=Renames, title_size='25sp', title_color=[200/255, 199/255, 234/255, 1],
+                                 unit=all_units, Recomment=Recomment).open()
 
 class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     Renames = ObjectProperty()
