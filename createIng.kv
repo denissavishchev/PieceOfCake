@@ -155,6 +155,43 @@ MDScreen:
             font_size: '18sp'
             color: 1, 1, 1, 1
             on_release:
+                if names.text == '':\
+                Snackbar(text="[color=#ff6600]Add Name [/color]",
+                snackbar_x='10dp', snackbar_y='10dp',
+                duration = 1,
+                size_hint_x=(Window.width - (dp(10) * 2))/Window.width,
+                bg_color=(75/255, 0/255, 130/255, .2),
+                radius=[20],
+                font_size='17sp').open()
+
+                elif price.text == '':\
+                Snackbar(text="[color=#ff6600]Add Price [/color]",
+                snackbar_x='10dp', snackbar_y='10dp',
+                duration = 1,
+                size_hint_x=(Window.width - (dp(10) * 2))/Window.width,
+                bg_color=(75/255, 0/255, 130/255, .2),
+                radius=[20],
+                font_size='17sp').open()
+
+                elif quantity.text == '':\
+                Snackbar(text="[color=#ff6600]Add Quantity [/color]",
+                snackbar_x='10dp', snackbar_y='10dp',
+                duration = 1,
+                size_hint_x=(Window.width - (dp(10) * 2))/Window.width,
+                bg_color=(75/255, 0/255, 130/255, .2),
+                radius=[20],
+                font_size='17sp').open()
+
+                elif unit.text == '':\
+                Snackbar(text="[color=#ff6600]Choose Unit [/color]",
+                snackbar_x='10dp', snackbar_y='10dp',
+                duration = 1,
+                size_hint_x=(Window.width - (dp(10) * 2))/Window.width,
+                bg_color=(75/255, 0/255, 130/255, .2),
+                radius=[20],
+                font_size='17sp').open()
+
+                else:\
                 app.create_ingredient(names.text, price.text, quantity.text, pcs.state, ml.state, gram.state, comment.text, unit.text)
                 Snackbar(text="[color=#ff6600]Ingredient [/color]" +str(names.text)+ "[color=#ff6600] added![/color]",
                 snackbar_x='10dp', snackbar_y='10dp',
@@ -164,15 +201,6 @@ MDScreen:
                 radius=[20],
                 font_size='17sp').open()
 
-
-
-                names.text=''
-                price.text=''
-                quantity.text=''
-                comment.text=''
-                pcs.state='normal'
-                ml.state='normal'
-                gram.state='normal'
 
             canvas.before:
                 Color:
@@ -188,6 +216,20 @@ MDScreen:
             on_release:
                 root.manager. transition.direction = 'down'
                 root.manager.current = 'main'
+
+        Buttons:
+            text: 'Clean'
+            pos_hint: {"center_x": .15, "center_y": .14}
+            font_size: '14sp'
+            size_hint: .1, .048
+            on_release:
+                names.text=''
+                price.text=''
+                quantity.text=''
+                comment.text=''
+                pcs.state='normal'
+                ml.state='normal'
+                gram.state='normal'
 
 <Buttons@MDFillRoundFlatButton>
 

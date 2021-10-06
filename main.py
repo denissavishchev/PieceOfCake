@@ -15,9 +15,10 @@ from kivymd.uix.behaviors.toggle_behavior import MDToggleButton
 from kivymd.uix.button import MDFillRoundFlatButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import FloatLayout
+from kivymd.uix.screen import MDScreen
 from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.textfield import MDTextFieldRect
-from kivy.uix.scrollview import ScrollView
+from kivymd.theming import ThemeManager
 
 Window.size = (360, 770)  # (1080, 2340)
 
@@ -62,6 +63,7 @@ class CustomPopup(Popup, FakeRectangularElevationBehavior, FloatLayout, TouchBeh
 
 class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     Renames = ObjectProperty()
+    UnitC =ObjectProperty()
 
     def on_long_touch(self, *args):
         layout = BoxLayout(orientation='vertical')
@@ -413,6 +415,8 @@ class PieceofCake(MDApp, Screen):
     qty = ObjectProperty()
     Renames = ObjectProperty()
     Recomment = ObjectProperty()
+    unitC = ObjectProperty()
+    spinner_cake = ObjectProperty()
 
     popup = None
     def build(self):
@@ -465,7 +469,7 @@ class PieceofCake(MDApp, Screen):
         screen_manager.get_screen('ingredientList').ingredientList.clear_widgets()
 
     def clean_ingSelector_list(self):
-        screen_manager.get_screen('ingSelector').selectorList.clear_widgets()
+        screen_manager.get_screen('recipeList').recipeList.clear_widgets()
 
     def filter_ingredients(self, ingredients, message):
         if message == '':
@@ -557,7 +561,7 @@ class PieceofCake(MDApp, Screen):
         self.qty = self.all_qtys
         self.unit = self.all_units
 
-    def create_recipe(self, Renames, Recomment):
+    def create_recipe(self, Renames, Recomment, Diameter, unitC):
         try:
             con = sql.connect('sweet.db')
             cur = con.cursor()
@@ -567,8 +571,8 @@ class PieceofCake(MDApp, Screen):
                 con = sql.connect('sweet.db')
                 cur = con.cursor()
                 cur.execute(
-                    """ INSERT INTO names (names,comment,timeadding) VALUES (?,?,?)""",
-                    (Renames, Recomment, now))
+                    """ INSERT INTO names (names,comment,diameter,unit,timeadding) VALUES (?,?,?,?,?)""",
+                    (Renames, Recomment, Diameter, unitC, now))
                 con.commit()
                 # con.close()
 
@@ -613,12 +617,18 @@ class PieceofCake(MDApp, Screen):
 
         for x in cur:
             Renames = x[1]
-            screen_manager.get_screen('recipeList').recipeList.add_widget(CompleteRecipe(Renames=Renames))
+            UnitC = x[4]
+            screen_manager.get_screen('recipeList').recipeList.add_widget(CompleteRecipe(Renames=Renames,UnitC=UnitC))
+        con.close()
 
     def show_recipe(self, Renames):
         custom_popup = CustomPopup()
         show_rec = custom_popup.show_recipe1(Renames)
         # print(show_rec)
+
+    def spinner_drop(self, spinner_cake):
+        print(spinner_cake)
+
 
     # Create the SQL
     con = sql.connect('sweet.db')
@@ -638,6 +648,8 @@ class PieceofCake(MDApp, Screen):
                 UserID integer PRIMARY KEY AUTOINCREMENT,
                 names text,
                 comment text,
+                diameter text,
+                unit text,
                 timeadding timestamp)
                 """)
     cur.execute("""CREATE TABLE  IF NOT EXISTS  ingredients(

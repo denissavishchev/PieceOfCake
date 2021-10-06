@@ -1,8 +1,4 @@
-#:import Snackbar kivymd.uix.snackbar.Snackbar
-#:include createRecipe.kv
-#:include ingSelector.kv
-#:include createIng.kv
-#:include ingredientList.kv
+
 
 <CustomPopup>:
     id: popup
@@ -41,8 +37,6 @@
                         size: self.size
                         radius: [20]
                         source: 'image/1.png'
-#        Widget:
-#            size_hint_y: .01
 
         MDLabel:
             text: '  Comment:'
@@ -84,7 +78,6 @@
     elevation: 1
     md_bg_color: 1,1,1,1
     radius: [20]
-#    Renames: Renames
     orientation: "vertical"
 
     MDFloatLayout:
@@ -92,7 +85,16 @@
         radius: [20]
         size_hint: .6, .9
         pos_hint: {"center_x": .5, "center_y": .5}
-        md_bg_color: 75/255, 0/255, 130/255, .2
+        md_bg_color: (75/255, 0/255, 130/255, .2) if UnitC.text == 'cake' else (255/255, 102/255, 0/255, .5)
+    MDLabel:
+        id: UnitC
+        text: str(root.UnitC)
+        markup: True
+        font_size: '25sp'
+        size_hint_x: .8
+        theme_text_color: "Custom"
+        text_color: 1, 1, 1, 0
+        pos_hint: {"center_x": .6, "center_y": .5}
     MDLabel:
         id: Renames
         text: str(root.Renames)
@@ -113,7 +115,7 @@
 
 
     MyToggleButton:
-        id: addRe
+        id: Calc
         text: 'Calc'
         size_hint: .15, .7
         font_size: '18sp'
@@ -284,12 +286,10 @@
         text_color: (75/255, 0/255, 130/255, .1) if comment.text =='' else (75/255, 0/255, 130/255, 1)
         on_release: app.show_comment(comment.text)
 
-
+<MDMenuItem>:
+    on_release: app.change_variable(self.text)
 
 MDScreen:
-#    ingredients: ingredients
-#    message: message
-    todo_list: todo_list
     name: 'main'
     MDFloatLayout:
         md_bg_color: 72/255, 61/255, 139/255, .5
@@ -329,20 +329,233 @@ MDScreen:
                 root.manager. transition.direction = 'left'
                 root.manager.current = 'recipeList'
                 app.load_recipes()
-        ScrollView:
-            do_scroll_y: True
-            do_scroll_x: False
-            size_hint_y: .8
-            pos_hint: {"center_x": .5, "y": 0}
-            bar_width: 0
-            GridLayout:
-                id: todo_list
-                cols: 1
+
+        Spinner:
+            id: spinner_cake
+            text: 'Choose Cake'
+            size_hint: .6, .05
+            pos_hint: {"center": (.33, .79)}
+            background_color: (72/255, 61/255, 139/255, .5)
+            values: ['Brownie', 'Mox', 'Latte']
+#            on_text:
+#                app.spinner_drop(spinner_cake.text)
+
+        Spinner:
+            id: spinner_mousse
+            text: 'Choose Mousse'
+            size_hint: .6, .05
+            pos_hint: {"center": (.33, .72)}
+            background_color: (72/255, 61/255, 139/255, .5)
+            values: ['Strawberry', 'Banana', 'Kivy']
+#            on_text:
+#                app.spinner_drop(spinner_cake.text)
+
+        MDFloatLayout:
+            size_hint: .2, .05
+            pos_hint: {"center_x": .77, "center_y": .79}
+            canvas:
+                Color:
+                    rgb: (238/255, 238/255, 238/255, 1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius: [25]
+            TextInput:
+                id: cake_weight
+                hint_text: 'Gram'
+                input_filter:'int'
+                size_hint: 1, None
+                pos_hint: {"center_x": .5, "center_y": .5}
                 height: self.minimum_height
-                row_default_height: 80
-                size_hint_y: None
-                padding: 15, 10
-                spacing: 15, 20
+                multiline: False
+                cursor_color: 75/255, 0/255, 130/255, 1
+                background_color: 0, 0, 0, 0
+                padding: 15
+                font_size: '18sp'
+
+        MDFloatLayout:
+            size_hint: .2, .05
+            pos_hint: {"center_x": .77, "center_y": .72}
+            canvas:
+                Color:
+                    rgb: (238/255, 238/255, 238/255, 1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius: [25]
+            TextInput:
+                id: cake_weight
+                hint_text: 'Gram'
+                input_filter:'int'
+                size_hint: 1, None
+                pos_hint: {"center_x": .5, "center_y": .5}
+                height: self.minimum_height
+                multiline: False
+                cursor_color: 75/255, 0/255, 130/255, 1
+                background_color: 0, 0, 0, 0
+                padding: 15
+                font_size: '18sp'
+
+        MyToggleButton:
+            id: square
+            size_hint: .3, .13
+            pos_hint: {"center_x": .2, "center_y": .6}
+            group: 'form'
+            Image:
+                source: 'image/square.png'
+#            on_state:
+#                if self.state == "down":\
+#                unitC.text = 'cake'
+        MyToggleButton:
+            id: circle
+            size_hint: .3, .13
+            pos_hint: {"center_x": .2, "center_y": .45}
+            group: 'form'
+            Image:
+                source: 'image/circle.png'
+#                center_x: self.parent.center_x
+#                center_y: self.parent.center_y
+#                width: 320
+#                height: 320
+
+        MDFloatLayout:
+            size_hint: .2, .035
+            pos_hint: {"center_x": .47, "center_y": .645}
+            canvas:
+                Color:
+                    rgb: (238/255, 238/255, 238/255, 1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius: [25]
+            TextInput:
+                id: square_height
+                hint_text: 'Height'
+                input_filter:'int'
+                size_hint: 1, None
+                pos_hint: {"center_x": .5, "center_y": .5}
+                height: self.minimum_height
+                multiline: False
+                cursor_color: 75/255, 0/255, 130/255, 1
+                background_color: 0, 0, 0, 0
+                padding: 15
+                font_size: '18sp'
+
+        MDFloatLayout:
+            size_hint: .2, .04
+            pos_hint: {"center_x": .47, "center_y": .601}
+            canvas:
+                Color:
+                    rgb: (238/255, 238/255, 238/255, 1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius: [25]
+            TextInput:
+                id: square_length
+                hint_text: 'Length'
+                input_filter:'int'
+                size_hint: 1, None
+                pos_hint: {"center_x": .5, "center_y": .5}
+                height: self.minimum_height
+                multiline: False
+                cursor_color: 75/255, 0/255, 130/255, 1
+                background_color: 0, 0, 0, 0
+                padding: 15
+                font_size: '18sp'
+
+        MDFloatLayout:
+            size_hint: .2, .04
+            pos_hint: {"center_x": .47, "center_y": .555}
+            canvas:
+                Color:
+                    rgb: (238/255, 238/255, 238/255, 1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius: [25]
+            TextInput:
+                id: square_width
+                hint_text: 'Width'
+                input_filter:'int'
+                size_hint: 1, None
+                pos_hint: {"center_x": .5, "center_y": .5}
+                height: self.minimum_height
+                multiline: False
+                cursor_color: 75/255, 0/255, 130/255, 1
+                background_color: 0, 0, 0, 0
+                padding: 15
+                font_size: '18sp'
+
+        MDFloatLayout:
+            size_hint: .2, .04
+            pos_hint: {"center_x": .47, "center_y": .48}
+            canvas:
+                Color:
+                    rgb: (238/255, 238/255, 238/255, 1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius: [25]
+            TextInput:
+                id: circle_height
+                hint_text: 'Height'
+                input_filter:'int'
+                size_hint: 1, None
+                pos_hint: {"center_x": .5, "center_y": .5}
+                height: self.minimum_height
+                multiline: False
+                cursor_color: 75/255, 0/255, 130/255, 1
+                background_color: 0, 0, 0, 0
+                padding: 15
+                font_size: '18sp'
+
+        MDFloatLayout:
+            size_hint: .2, .04
+            pos_hint: {"center_x": .47, "center_y": .43}
+            canvas:
+                Color:
+                    rgb: (238/255, 238/255, 238/255, 1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius: [25]
+            TextInput:
+                id: circle_diameter
+                hint_text: 'Diam.'
+                input_filter:'int'
+                size_hint: 1, None
+                pos_hint: {"center_x": .5, "center_y": .5}
+                height: self.minimum_height
+                multiline: False
+                cursor_color: 75/255, 0/255, 130/255, 1
+                background_color: 0, 0, 0, 0
+                padding: 15
+                font_size: '18sp'
+
+        Buttons:
+            text: 'Result'
+            pos_hint: {"center_x": .3, "center_y": .27}
+            size_hint: .5, .1
+            font_size: '30sp'
+            on_release:
+                result.text = 'I love you!'
+
+        MDFloatLayout:
+            size_hint: .3, .08
+            pos_hint: {"center_x": .75, "center_y": .27}
+            canvas:
+                Color:
+                    rgb: (238/255, 238/255, 238/255, 1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius: [25]
+            MDLabel:
+                id: result
+                text: ' '
+                font_size: '20sp'
+                pos_hint: {"center_x": .6, "center_y": .5}
 
 
 <Buttons@MDFillRoundFlatButton>
