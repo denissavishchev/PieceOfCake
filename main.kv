@@ -85,16 +85,29 @@
         radius: [20]
         size_hint: .6, .9
         pos_hint: {"center_x": .5, "center_y": .5}
-        md_bg_color: (75/255, 0/255, 130/255, .2) if UnitC.text == 'cake' else (255/255, 102/255, 0/255, .5)
-    MDLabel:
-        id: UnitC
-        text: str(root.UnitC)
-        markup: True
-        font_size: '25sp'
-        size_hint_x: .8
-        theme_text_color: "Custom"
-        text_color: 1, 1, 1, 0
-        pos_hint: {"center_x": .6, "center_y": .5}
+        md_bg_color: 75/255, 0/255, 130/255, .2 #if UnitC.text == 'cake' else (255/255, 102/255, 0/255, .5)
+    MDFloatLayout:
+        size_hint: .11, .9
+        pos_hint: {"center_x": .75, "center_y": .5}
+        canvas:
+            Color:
+                rgb: (210/255, 210/255, 210/255, .5)
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius: [25]
+        TextInput:
+            id: Diameter
+            hint_text: 'D'
+            multiline: False
+            font_size: '18sp'
+            size_hint: 1, None
+            height: 55
+            input_filter: 'int'
+            cursor_color: 75/255, 0/255, 130/255, 1
+            background_color: 0,0,0,0
+            pos_hint: {"center_x": .5, "center_y": .5}
+
     MDLabel:
         id: Renames
         text: str(root.Renames)
@@ -103,7 +116,7 @@
         size_hint_x: .8
         theme_text_color: "Custom"
         text_color: 1, 1, 1, 1
-        pos_hint: {"center_x": .7, "center_y": .5}
+        pos_hint: {"center_x": .65, "center_y": .5}
 
     Buttons:
         id: show
@@ -290,6 +303,7 @@
     on_release: app.change_variable(self.text)
 
 MDScreen:
+    id: ScreenX
     name: 'main'
     MDFloatLayout:
         md_bg_color: 72/255, 61/255, 139/255, .5
@@ -323,6 +337,7 @@ MDScreen:
                 root.manager. transition.direction = 'up'
                 root.manager.current = 'createRecipe'
         Buttons:
+            id: one
             text: 'List of \nRecipes'
             pos_hint: {"center_x": .87, "center_y": .87}
             on_release:
@@ -332,13 +347,15 @@ MDScreen:
 
         Spinner:
             id: spinner_cake
-            text: 'Choose Cake'
+            text: 'Renames'
             size_hint: .6, .05
             pos_hint: {"center": (.33, .79)}
             background_color: (72/255, 61/255, 139/255, .5)
-            values: ['Brownie', 'Mox', 'Latte']
-#            on_text:
+            values: 'str(root.liste)', '1', '2'
+#            on_release:
 #                app.spinner_drop(spinner_cake.text)
+#            on_text:
+#                root.spinner_drop()
 
         Spinner:
             id: spinner_mousse
@@ -535,15 +552,15 @@ MDScreen:
 
         Buttons:
             text: 'Result'
-            pos_hint: {"center_x": .3, "center_y": .27}
+            pos_hint: {"center_x": .3, "center_y": .2}
             size_hint: .5, .1
             font_size: '30sp'
             on_release:
-                result.text = 'Done'
+                result.text = 'Result'
 
         MDFloatLayout:
             size_hint: .3, .08
-            pos_hint: {"center_x": .75, "center_y": .27}
+            pos_hint: {"center_x": .75, "center_y": .2}
             canvas:
                 Color:
                     rgb: (238/255, 238/255, 238/255, 1)
@@ -557,6 +574,13 @@ MDScreen:
                 font_size: '20sp'
                 pos_hint: {"center_x": .6, "center_y": .5}
 
+        Buttons:
+            text: 'Download as PDF'
+            pos_hint: {"center_x": .5, "center_y": .1}
+            size_hint: .9, .05
+            font_size: '30sp'
+            on_release:
+                result.text = 'Done'
 
 <Buttons@MDFillRoundFlatButton>
 

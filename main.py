@@ -4,7 +4,7 @@ from time import strftime
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.metrics import dp
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -617,8 +617,8 @@ class PieceofCake(MDApp, Screen):
 
         for x in cur:
             Renames = x[1]
-            UnitC = x[4]
-            screen_manager.get_screen('recipeList').recipeList.add_widget(CompleteRecipe(Renames=Renames,UnitC=UnitC))
+            # UnitC = x[4]
+            screen_manager.get_screen('recipeList').recipeList.add_widget(CompleteRecipe(Renames=Renames))
         con.close()
 
     def show_recipe(self, Renames):
@@ -626,8 +626,13 @@ class PieceofCake(MDApp, Screen):
         show_rec = custom_popup.show_recipe1(Renames)
         # print(show_rec)
 
-    def spinner_drop(self, spinner_cake):
-        print(spinner_cake)
+    # def spinner_drop(self, text):
+    #     con = sql.connect('sweet.db')
+    #     cur = con.cursor()
+    #     values = [r[1] for r in cur.execute('select names from names')]
+    #
+    #     liste = values
+    #     print(liste)
 
 
     # Create the SQL
