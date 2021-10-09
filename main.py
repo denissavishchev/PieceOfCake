@@ -22,6 +22,10 @@ from kivymd.theming import ThemeManager
 
 Window.size = (360, 770)  # (1080, 2340)
 
+class MainPageRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
+    Renames = ObjectProperty()
+    Diameter = ObjectProperty()
+
 class CustomPopup(Popup, FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     contentBox = ObjectProperty()
     Renames = ObjectProperty()
@@ -626,13 +630,8 @@ class PieceofCake(MDApp, Screen):
         show_rec = custom_popup.show_recipe1(Renames)
         # print(show_rec)
 
-    # def spinner_drop(self, text):
-    #     con = sql.connect('sweet.db')
-    #     cur = con.cursor()
-    #     values = [r[1] for r in cur.execute('select names from names')]
-    #
-    #     liste = values
-    #     print(liste)
+    def add_ing_to_mainpage(self, Renames, Diameter):
+        screen_manager.get_screen('main').main_page.add_widget(MainPageRecipe(Renames=Renames, Diameter=Diameter))
 
 
     # Create the SQL
