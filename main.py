@@ -25,6 +25,9 @@ Window.size = (360, 770)  # (1080, 2340)
 class MainPageRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     Renames = ObjectProperty()
     Diameter = ObjectProperty()
+    names = ObjectProperty()
+    unit = ObjectProperty()
+    qty = ObjectProperty()
 
 class CustomPopup(Popup, FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     contentBox = ObjectProperty()
@@ -68,6 +71,10 @@ class CustomPopup(Popup, FakeRectangularElevationBehavior, FloatLayout, TouchBeh
 class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     Renames = ObjectProperty()
     UnitC =ObjectProperty()
+    names = ObjectProperty()
+    unit = ObjectProperty()
+    qty = ObjectProperty()
+    quantity = ObjectProperty()
 
     def on_long_touch(self, *args):
         layout = BoxLayout(orientation='vertical')
@@ -206,7 +213,8 @@ class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavio
 class AddIngToRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     names = ObjectProperty()
     unit = ObjectProperty()
-    qty = ObjectProperty
+    qty = ObjectProperty()
+    Renames = ObjectProperty()
     # def get_from(self):
     #     names = self.ids.names.text
     #     unit = self.ids.unit.text
@@ -221,6 +229,7 @@ class AddRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     names = ObjectProperty()
     unit = ObjectProperty()
     qty = ObjectProperty()
+    Renames = ObjectProperty()
 
 
 class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
@@ -241,6 +250,7 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
     edit_comment = ObjectProperty()
     namesA = ObjectProperty()
     qty = ObjectProperty()
+    Renames = ObjectProperty()
 
     def on_long_touch(self, *args):
         layout = BoxLayout(orientation='vertical')
@@ -421,6 +431,8 @@ class PieceofCake(MDApp, Screen):
     Recomment = ObjectProperty()
     unitC = ObjectProperty()
     spinner_cake = ObjectProperty()
+    weight = ObjectProperty()
+
 
     popup = None
     def build(self):
@@ -565,8 +577,10 @@ class PieceofCake(MDApp, Screen):
         self.qty = self.all_qtys
         self.unit = self.all_units
 
-    def create_recipe(self, Renames, Recomment, Diameter, unitC):
+    def create_recipe(self, Renames, Recomment):
         try:
+            Diameter = '0'
+            unitC = '0'
             con = sql.connect('sweet.db')
             cur = con.cursor()
             cur.execute(f"SELECT names FROM names WHERE names = '{Renames}'")
@@ -630,8 +644,53 @@ class PieceofCake(MDApp, Screen):
         show_rec = custom_popup.show_recipe1(Renames)
         # print(show_rec)
 
+    all_mainpages_names = []
+    all_diameteres = []
     def add_ing_to_mainpage(self, Renames, Diameter):
         screen_manager.get_screen('main').main_page.add_widget(MainPageRecipe(Renames=Renames, Diameter=Diameter))
+
+        self.all_mainpages_names.append(Renames)
+        self.mainpages_names = self.all_mainpages_names
+
+        self.all_diameteres.append(Diameter)
+        self.diameteres = self.all_diameteres
+        print(max(self.diameteres))
+        self.max_diameter = max(self.diameteres)
+
+
+    def result_price(self):
+        try:
+            self.weight = 0
+            for ing in self.mainpages_names:
+                con = sql.connect('sweet.db')
+                cur = con.cursor()
+                cur.execute(f"SELECT UserID FROM names WHERE names = '{ing}'")
+                for x in cur:
+                    UserID = x[0]
+                    # print(str(UserID) +' '+ str(ing))
+
+                    for y in str(UserID):
+                        con = sql.connect('sweet.db')
+                        cur = con.cursor()
+                        cur.execute(f"SELECT * FROM ingredients WHERE namesID = '{y}'")
+                        for z in cur:
+                            ing_name = z[1]
+                            ing_qty = z[3]
+
+                            self.weight = self.weight+int(ing_qty)
+                            # print(ing_name+' '+ing_qty)
+            # print(self.weight)
+            # print(self.max_diameter)
+
+        except:
+            Snackbar(
+                text="[color=#ff6600]    Add at least one ingredient![/color]",
+                snackbar_x='10dp', snackbar_y='10dp',
+                duration=1,
+                size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
+                bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
+                radius=[20],
+                font_size='17sp').open()
 
 
     # Create the SQL

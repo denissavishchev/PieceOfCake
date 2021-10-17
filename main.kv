@@ -17,15 +17,15 @@
         pos_hint: {"center_x": .45, "center_y": .4}
     MDLabel:
         id: Diameter
-        text: str(root.Diameter)
+        text: str(root.Diameter)+' cm'
         markup: True
         size_hint_x: .35
         theme_text_color: "Custom"
         text_color: 1, 1, 1, 1
-        pos_hint: {"center_x": .8, "center_y": .4}
+        pos_hint: {"center_x": .85, "center_y": .4}
     ToggleButton:
         id: addRemove
-        pos_hint: {"center_x": .8, "center_y": .4}
+        pos_hint: {"center_x": .9, "center_y": .4}
         size_hint: .16, .9
         text: 'Remove' if self.state == 'normal' else 'Rmd'
         on_release:
@@ -165,7 +165,6 @@
         text: 'Show'
         on_release:
             app.show_recipe(Renames.text)
-
 
     ToggleButton:
         id: Calc
@@ -312,9 +311,12 @@
     MDLabel:
         id: names
         text: str(root.names)
-        markup: True
+#            markup: True
         font_size: '20sp'
         size_hint_x: .8
+#        text_size: None, self.height
+#        size_hint_x: None
+#        width: self.texture_size[0]
         pos_hint: {"center_x": .46, "center_y": .8}
     MDLabel:
         id: quantity
@@ -353,6 +355,7 @@ MDScreen:
     id: main
     name: 'main'
     main_page: main_page
+    weight:weight
     MDFloatLayout:
         md_bg_color: 72/255, 61/255, 139/255, .5
 
@@ -570,15 +573,15 @@ MDScreen:
                     background_color: 0, 0, 0, 0
                     padding: 15
                     font_size: '18sp'
-
         Buttons:
             text: 'Result'
             pos_hint: {"center_x": .18, "center_y": .2}
             size_hint: .25, .1
             font_size: '30sp'
             on_release:
-                main_price.text = 'Price'
-                weight.text = 'Weight'
+                app.result_price()
+#                main_price.text = 'Price'
+                weight.text = str(app.weight)+' Gr'
 
         MDFloatLayout:
             size_hint: .25, .08
@@ -591,7 +594,7 @@ MDScreen:
                     pos: self.pos
                     radius: [25]
             MDLabel:
-                id: main_price
+                id: result_price
                 text: ' '
                 font_size: '20sp'
                 pos_hint: {"center_x": .6, "center_y": .5}
@@ -607,7 +610,7 @@ MDScreen:
                     radius: [25]
             MDLabel:
                 id: weight
-                text: ' '
+                text: ''
                 font_size: '20sp'
                 pos_hint: {"center_x": .6, "center_y": .5}
 
