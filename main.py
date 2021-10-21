@@ -22,12 +22,14 @@ from kivymd.theming import ThemeManager
 
 Window.size = (360, 770)  # (1080, 2340)
 
+
 class MainPageRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     Renames = ObjectProperty()
     Diameter = ObjectProperty()
     names = ObjectProperty()
     unit = ObjectProperty()
     qty = ObjectProperty()
+
 
 class CustomPopup(Popup, FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     contentBox = ObjectProperty()
@@ -62,15 +64,16 @@ class CustomPopup(Popup, FakeRectangularElevationBehavior, FloatLayout, TouchBeh
             # print(unit1)
             # print(qty)
 
-            unitx = ing_name+'  '+ qty+'  '+unit1
+            unitx = ing_name + '  ' + qty + '  ' + unit1
             unit.append(unitx)
             all_units = ('\n'.join(unit))
-        self.popup = CustomPopup(title=Renames, title_size='25sp', title_color=[200/255, 199/255, 234/255, 1],
+        self.popup = CustomPopup(title=Renames, title_size='25sp', title_color=[200 / 255, 199 / 255, 234 / 255, 1],
                                  unit=all_units, Recomment=Recomment).open()
+
 
 class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     Renames = ObjectProperty()
-    UnitC =ObjectProperty()
+    UnitC = ObjectProperty()
     names = ObjectProperty()
     unit = ObjectProperty()
     qty = ObjectProperty()
@@ -432,9 +435,11 @@ class PieceofCake(MDApp, Screen):
     unitC = ObjectProperty()
     spinner_cake = ObjectProperty()
     weight = ObjectProperty()
-
+    square = ObjectProperty()
+    circle = ObjectProperty()
 
     popup = None
+
     def build(self):
         global screen_manager
         screen_manager = ScreenManager()
@@ -577,10 +582,8 @@ class PieceofCake(MDApp, Screen):
         self.qty = self.all_qtys
         self.unit = self.all_units
 
-    def create_recipe(self, Renames, Recomment):
+    def create_recipe(self, Renames, Recomment, Weight, Diameter):
         try:
-            Diameter = '0'
-            unitC = '0'
             con = sql.connect('sweet.db')
             cur = con.cursor()
             cur.execute(f"SELECT names FROM names WHERE names = '{Renames}'")
@@ -590,7 +593,7 @@ class PieceofCake(MDApp, Screen):
                 cur = con.cursor()
                 cur.execute(
                     """ INSERT INTO names (names,comment,diameter,unit,timeadding) VALUES (?,?,?,?,?)""",
-                    (Renames, Recomment, Diameter, unitC, now))
+                    (Renames, Recomment, Diameter, Weight, now))
                 con.commit()
                 # con.close()
 
@@ -646,6 +649,7 @@ class PieceofCake(MDApp, Screen):
 
     all_mainpages_names = []
     all_diameteres = []
+
     def add_ing_to_mainpage(self, Renames, Diameter):
         screen_manager.get_screen('main').main_page.add_widget(MainPageRecipe(Renames=Renames, Diameter=Diameter))
 
@@ -654,44 +658,81 @@ class PieceofCake(MDApp, Screen):
 
         self.all_diameteres.append(Diameter)
         self.diameteres = self.all_diameteres
-        print(max(self.diameteres))
+        # print(max(self.diameteres))
         self.max_diameter = max(self.diameteres)
 
 
+    def coefficient(self, square, circle, square_length, square_width, circle_diameter):
+        self.coeff = 0
+        if square == 'down':
+            if square_length != '' and square_width != '':
+                self.coeff = round((((int(square_length)) *
+                                      (int(square_width))) / ((((int(self.max_diameter)) / 2) *
+                                       ((int(self.max_diameter)) / 2)) * 3.1415)), 4)
+                print(self.coeff)
+            else:
+                Snackbar(
+                    text="[color=#ff6600]    Empty Fields![/color]",
+                    snackbar_x='10dp', snackbar_y='10dp',
+                    duration=1,
+                    size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
+                    bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
+                    radius=[20],
+                    font_size='17sp').open()
+        elif circle == 'down':
+            if circle_diameter != '':
+                self.coeff = round(int(circle_diameter) *
+                                        (int(circle_diameter)) /
+                                        (int(self.max_diameter) * (int(self.max_diameter))), 4)
+                print(self.coeff)
+            else:
+                Snackbar(
+                    text="[color=#ff6600]    Empty Fields![/color]",
+                    snackbar_x='10dp', snackbar_y='10dp',
+                    duration=1,
+                    size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
+                    bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
+                    radius=[20],
+                    font_size='17sp').open()
+        else:
+            self.coeff = 1
+            print(self.coeff)
+
+
     def result_price(self):
-        try:
-            self.weight = 0
-            for ing in self.mainpages_names:
-                con = sql.connect('sweet.db')
-                cur = con.cursor()
-                cur.execute(f"SELECT UserID FROM names WHERE names = '{ing}'")
-                for x in cur:
-                    UserID = x[0]
-                    # print(str(UserID) +' '+ str(ing))
 
-                    for y in str(UserID):
-                        con = sql.connect('sweet.db')
-                        cur = con.cursor()
-                        cur.execute(f"SELECT * FROM ingredients WHERE namesID = '{y}'")
-                        for z in cur:
-                            ing_name = z[1]
-                            ing_qty = z[3]
+            try:
+                self.weight = 0
+                for ing in self.mainpages_names:
+                    con = sql.connect('sweet.db')
+                    cur = con.cursor()
+                    cur.execute(f"SELECT UserID FROM names WHERE names = '{ing}'")
+                    for x in cur:
+                        UserID = x[0]
+                        # print(str(UserID) +' '+ str(ing))
 
-                            self.weight = self.weight+int(ing_qty)
-                            # print(ing_name+' '+ing_qty)
-            # print(self.weight)
-            # print(self.max_diameter)
+                        for y in str(UserID):
+                            con = sql.connect('sweet.db')
+                            cur = con.cursor()
+                            cur.execute(f"SELECT * FROM ingredients WHERE namesID = '{y}'")
+                            for z in cur:
+                                ing_name = z[1]
+                                ing_qty = z[3]
 
-        except:
-            Snackbar(
-                text="[color=#ff6600]    Add at least one ingredient![/color]",
-                snackbar_x='10dp', snackbar_y='10dp',
-                duration=1,
-                size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
-                bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
-                radius=[20],
-                font_size='17sp').open()
+                                self.weight = self.weight + int(ing_qty)
+                                # print(ing_name+' '+ing_qty)
+                # print(self.weight)
+                # print(self.max_diameter)
 
+            except:
+                Snackbar(
+                    text="[color=#ff6600]    Add at least one ingredient![/color]",
+                    snackbar_x='10dp', snackbar_y='10dp',
+                    duration=1,
+                    size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
+                    bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
+                    radius=[20],
+                    font_size='17sp').open()
 
     # Create the SQL
     con = sql.connect('sweet.db')
