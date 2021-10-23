@@ -29,6 +29,7 @@ class MainPageRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavio
     names = ObjectProperty()
     unit = ObjectProperty()
     qty = ObjectProperty()
+    Weight = ObjectProperty()
 
 
 class CustomPopup(Popup, FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
@@ -78,6 +79,8 @@ class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavio
     unit = ObjectProperty()
     qty = ObjectProperty()
     quantity = ObjectProperty()
+    Diameter = ObjectProperty()
+    Weight = ObjectProperty()
 
     def on_long_touch(self, *args):
         layout = BoxLayout(orientation='vertical')
@@ -638,8 +641,9 @@ class PieceofCake(MDApp, Screen):
 
         for x in cur:
             Renames = x[1]
-            # UnitC = x[4]
-            screen_manager.get_screen('recipeList').recipeList.add_widget(CompleteRecipe(Renames=Renames))
+            Diameter = x[3]
+            Weight = x[4]
+            screen_manager.get_screen('recipeList').recipeList.add_widget(CompleteRecipe(Renames=Renames, Diameter=Diameter, Weight=Weight))
         con.close()
 
     def show_recipe(self, Renames):
@@ -650,8 +654,8 @@ class PieceofCake(MDApp, Screen):
     all_mainpages_names = []
     all_diameteres = []
 
-    def add_ing_to_mainpage(self, Renames, Diameter):
-        screen_manager.get_screen('main').main_page.add_widget(MainPageRecipe(Renames=Renames, Diameter=Diameter))
+    def add_ing_to_mainpage(self, Renames, Diameter, Weight):
+        screen_manager.get_screen('main').main_page.add_widget(MainPageRecipe(Renames=Renames, Diameter=Diameter, Weight=Weight))
 
         self.all_mainpages_names.append(Renames)
         self.mainpages_names = self.all_mainpages_names
@@ -669,7 +673,6 @@ class PieceofCake(MDApp, Screen):
                 self.coeff = round((((int(square_length)) *
                                       (int(square_width))) / ((((int(self.max_diameter)) / 2) *
                                        ((int(self.max_diameter)) / 2)) * 3.1415)), 4)
-                print(self.coeff)
             else:
                 Snackbar(
                     text="[color=#ff6600]    Empty Fields![/color]",
@@ -684,7 +687,6 @@ class PieceofCake(MDApp, Screen):
                 self.coeff = round(int(circle_diameter) *
                                         (int(circle_diameter)) /
                                         (int(self.max_diameter) * (int(self.max_diameter))), 4)
-                print(self.coeff)
             else:
                 Snackbar(
                     text="[color=#ff6600]    Empty Fields![/color]",
@@ -696,43 +698,66 @@ class PieceofCake(MDApp, Screen):
                     font_size='17sp').open()
         else:
             self.coeff = 1
-            print(self.coeff)
+
 
 
     def result_price(self):
+        print('Koefficient '+str(self.coeff)+'\n')
+        try:
+            self.weight = 0
+            self.final_price = 0
+            User = []
+            ing_names = []
+            for ing in self.mainpages_names:
+                con = sql.connect('sweet.db')
+                cur = con.cursor()
+                cur.execute(f"SELECT * FROM names WHERE names = '{ing}'")
+                for x in cur:
+                    UserID = x[0]
+                    weight = x[4]
+                    diameter = x[3]
+                    User.append(UserID)
+                    print(ing+' '+weight+'Gr '+diameter+'Cm ')
 
-            try:
-                self.weight = 0
-                for ing in self.mainpages_names:
-                    con = sql.connect('sweet.db')
-                    cur = con.cursor()
-                    cur.execute(f"SELECT UserID FROM names WHERE names = '{ing}'")
-                    for x in cur:
-                        UserID = x[0]
-                        # print(str(UserID) +' '+ str(ing))
+                    for y in User:
+                        con = sql.connect('sweet.db')
+                        cur = con.cursor()
+                        cur.execute(f"SELECT * FROM ingredients WHERE namesID = '{y}'")
+                        for z in cur:
+                            ing_name = z[1]
+                            ing_qty = z[3]
+                            ing_names.append(ing_name)
+                            self.ing_qty_coeff = float(ing_qty) * self.coeff
+                            print('   '+ing_name+' '+str(self.ing_qty_coeff)+' qty')
 
-                        for y in str(UserID):
-                            con = sql.connect('sweet.db')
-                            cur = con.cursor()
-                            cur.execute(f"SELECT * FROM ingredients WHERE namesID = '{y}'")
-                            for z in cur:
-                                ing_name = z[1]
-                                ing_qty = z[3]
+                            self.weight = self.weight + int(self.ing_qty_coeff)
 
-                                self.weight = self.weight + int(ing_qty)
-                                # print(ing_name+' '+ing_qty)
-                # print(self.weight)
-                # print(self.max_diameter)
+    #Price
+                            for b_i in ing_names:
+                                con = sql.connect('sweet.db')
+                                cur = con.cursor()
+                                cur.execute(f"SELECT * FROM sweet WHERE names = '{b_i}'")
+                                for i in cur:
+                                    basic_ing_name = i[1]
+                                    basic_ing_price = i[2]
+                                    basic_ing_qty = i[3]
 
-            except:
-                Snackbar(
-                    text="[color=#ff6600]    Add at least one ingredient![/color]",
-                    snackbar_x='10dp', snackbar_y='10dp',
-                    duration=1,
-                    size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
-                    bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
-                    radius=[20],
-                    font_size='17sp').open()
+
+                                    self.ing_final_price = self.ing_qty_coeff * float(basic_ing_price)/float(basic_ing_qty)
+                            self.final_price = round((self.final_price + self.ing_final_price), 2)
+                            print(str(basic_ing_name) + ' basic price = ' + str(basic_ing_price) + '$' + ' --> ' + str(basic_ing_qty + ' Gr'))
+
+                print('\n')
+                print(self.final_price)
+        except:
+            Snackbar(
+                text="[color=#ff6600]    Add at least one ingredient![/color]",
+                snackbar_x='10dp', snackbar_y='10dp',
+                duration=1,
+                size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
+                bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
+                radius=[20],
+                font_size='17sp').open()
 
     # Create the SQL
     con = sql.connect('sweet.db')
