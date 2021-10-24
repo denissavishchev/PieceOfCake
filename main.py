@@ -82,6 +82,8 @@ class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavio
     Diameter = ObjectProperty()
     Weight = ObjectProperty()
 
+
+
     def on_long_touch(self, *args):
         layout = BoxLayout(orientation='vertical')
         layout1 = FloatLayout()
@@ -170,13 +172,10 @@ class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavio
         self.pieceofcake.clean_ingredient_list()
         self.pieceofcake.load_ingredient()
 
-        Snackbar(text="[color=#ff6600]Ingredient [/color]" + str(self.names) + "[color=#ff6600] removed![/color]",
-                 snackbar_x='10dp', snackbar_y='10dp',
-                 duration=1,
-                 size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
-                 bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
-                 radius=[20],
-                 font_size='17sp').open()
+        self.snackbar = PieceofCake()
+        self.snackbar.Snackbar_message(
+            message="[color=#ff6600]Ingredient [/color]" + str(self.names) + "[color=#ff6600] removed![/color]")
+
 
     def editIngredient(self, obj):
         con = sql.connect('sweet.db')
@@ -201,13 +200,10 @@ class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavio
         self.pieceofcake.clean_ingredient_list()
         self.pieceofcake.load_ingredient()
 
-        Snackbar(text="[color=#ff6600]Ingredient [/color]" + str(self.names) + "[color=#ff6600] edited![/color]",
-                 snackbar_x='10dp', snackbar_y='10dp',
-                 duration=1,
-                 size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
-                 bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
-                 radius=[20],
-                 font_size='17sp').open()
+        self.snackbar = PieceofCake()
+        self.snackbar.Snackbar_message(
+            message="[color=#ff6600]Ingredient [/color]" + str(self.names) + "[color=#ff6600] edited![/color]")
+
 
     def closeWindow1(self, obj):
         self.pop1.dismiss()
@@ -366,13 +362,10 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
         self.pieceofcake.clean_ingredient_list()
         self.pieceofcake.load_ingredient()
 
-        Snackbar(text="[color=#ff6600]Ingredient [/color]" + str(self.names) + "[color=#ff6600] removed![/color]",
-                 snackbar_x='10dp', snackbar_y='10dp',
-                 duration=1,
-                 size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
-                 bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
-                 radius=[20],
-                 font_size='17sp').open()
+        self.snackbar = PieceofCake()
+        self.snackbar.Snackbar_message(
+            message="[color=#ff6600]Ingredient [/color]" + str(self.names) + "[color=#ff6600] removed![/color]")
+
 
     def editIngredient(self, obj):
         con = sql.connect('sweet.db')
@@ -397,13 +390,10 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
         self.pieceofcake.clean_ingredient_list()
         self.pieceofcake.load_ingredient()
 
-        Snackbar(text="[color=#ff6600]Ingredient [/color]" + str(self.names) + "[color=#ff6600] edited![/color]",
-                 snackbar_x='10dp', snackbar_y='10dp',
-                 duration=1,
-                 size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
-                 bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
-                 radius=[20],
-                 font_size='17sp').open()
+        self.snackbar = PieceofCake()
+        self.snackbar.Snackbar_message(
+            message="[color=#ff6600]Ingredient [/color]" + str(self.names) + "[color=#ff6600] edited![/color]")
+
 
     def closeWindow1(self, obj):
         self.pop1.dismiss()
@@ -443,6 +433,15 @@ class PieceofCake(MDApp, Screen):
 
     popup = None
 
+    def Snackbar_message(self, message):
+        Snackbar(text=f'{message}',
+                 snackbar_x='10dp', snackbar_y='10dp',
+                 duration=1,
+                 size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
+                 bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
+                 radius=[20],
+                 font_size='17sp').open()
+
     def build(self):
         global screen_manager
         screen_manager = ScreenManager()
@@ -473,14 +472,8 @@ class PieceofCake(MDApp, Screen):
             con.commit()
             con.close()
         else:
-            Snackbar(
-                text="[color=#ff6600]Ingredient [/color]" + str(names) + "[color=#ff6600] is already exists![/color]",
-                snackbar_x='10dp', snackbar_y='10dp',
-                duration=1,
-                size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
-                bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
-                radius=[20],
-                font_size='17sp').open()
+            self.Snackbar_message(message="[color=#ff6600]Ingredient [/color]" + str(names) + "[color=#ff6600] is already exists![/color]")
+
 
     def show_comment(self, comment):
         self.comment = comment
@@ -615,23 +608,12 @@ class PieceofCake(MDApp, Screen):
                 con.commit()
                 con.close()
             else:
-                Snackbar(text="[color=#ff6600]Ingredient [/color]" + str(
-                    Renames) + "[color=#ff6600] is already exists![/color]",
-                         snackbar_x='10dp', snackbar_y='10dp',
-                         duration=1,
-                         size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
-                         bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
-                         radius=[20],
-                         font_size='17sp').open()
+                self.Snackbar_message(message="[color=#ff6600]Ingredient [/color]" + str(
+                    Renames) + "[color=#ff6600] is already exists![/color]")
+
         except:
-            Snackbar(
-                text="[color=#ff6600]    Add at least one ingredient![/color]",
-                snackbar_x='10dp', snackbar_y='10dp',
-                duration=1,
-                size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
-                bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
-                radius=[20],
-                font_size='17sp').open()
+            self.Snackbar_message(message="[color=#ff6600]    Add at least one ingredient![/color]")
+
 
     def load_recipes(self):
 
@@ -674,28 +656,15 @@ class PieceofCake(MDApp, Screen):
                                       (int(square_width))) / ((((int(self.max_diameter)) / 2) *
                                        ((int(self.max_diameter)) / 2)) * 3.1415)), 4)
             else:
-                Snackbar(
-                    text="[color=#ff6600]    Empty Fields![/color]",
-                    snackbar_x='10dp', snackbar_y='10dp',
-                    duration=1,
-                    size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
-                    bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
-                    radius=[20],
-                    font_size='17sp').open()
+                self.Snackbar_message(message="[color=#ff6600]    Empty Fields![/color]")
+
         elif circle == 'down':
             if circle_diameter != '':
                 self.coeff = round(int(circle_diameter) *
                                         (int(circle_diameter)) /
                                         (int(self.max_diameter) * (int(self.max_diameter))), 4)
             else:
-                Snackbar(
-                    text="[color=#ff6600]    Empty Fields![/color]",
-                    snackbar_x='10dp', snackbar_y='10dp',
-                    duration=1,
-                    size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
-                    bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
-                    radius=[20],
-                    font_size='17sp').open()
+                self.Snackbar_message(message="[color=#ff6600]    Empty Fields![/color]")
         else:
             self.coeff = 1
 
@@ -749,15 +718,10 @@ class PieceofCake(MDApp, Screen):
 
                 print('\n')
                 print(self.final_price)
+
         except:
-            Snackbar(
-                text="[color=#ff6600]    Add at least one ingredient![/color]",
-                snackbar_x='10dp', snackbar_y='10dp',
-                duration=1,
-                size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
-                bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
-                radius=[20],
-                font_size='17sp').open()
+            self.Snackbar_message(message = "[color=#ff6600]    Add at least one ingredient![/color]")
+
 
     # Create the SQL
     con = sql.connect('sweet.db')
