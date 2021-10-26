@@ -652,17 +652,17 @@ class PieceofCake(MDApp, Screen):
         self.coeff = 0
         if square == 'down':
             if square_length != '' and square_width != '':
-                self.coeff = round((((int(square_length)) *
-                                      (int(square_width))) / ((((int(self.max_diameter)) / 2) *
-                                       ((int(self.max_diameter)) / 2)) * 3.1415)), 4)
+                self.coeff = round((((float(square_length)) *
+                                      (float(square_width))) / ((((float(self.max_diameter)) / 2) *
+                                       ((float(self.max_diameter)) / 2)) * 3.1415)), 4)
             else:
                 self.Snackbar_message(message="[color=#ff6600]    Empty Fields![/color]")
 
         elif circle == 'down':
             if circle_diameter != '':
-                self.coeff = round(int(circle_diameter) *
-                                        (int(circle_diameter)) /
-                                        (int(self.max_diameter) * (int(self.max_diameter))), 4)
+                self.coeff = round(float(circle_diameter) *
+                                        (float(circle_diameter)) /
+                                        (float(self.max_diameter) * (float(self.max_diameter))), 4)
             else:
                 self.Snackbar_message(message="[color=#ff6600]    Empty Fields![/color]")
         else:
@@ -687,6 +687,8 @@ class PieceofCake(MDApp, Screen):
                     diameter = x[3]
                     User.append(UserID)
                     print(ing+' '+weight+'Gr '+diameter+'Cm ')
+                    self.weight = int(self.weight + int(weight) * self.coeff)
+                    print('weight = ' + str(self.weight))
 
                     for y in User:
                         con = sql.connect('sweet.db')
@@ -696,11 +698,11 @@ class PieceofCake(MDApp, Screen):
                             ing_name = z[1]
                             ing_qty = z[3]
                             ing_names.append(ing_name)
-                            self.ing_qty_coeff = float(ing_qty) * self.coeff
+                            self.ing_qty_coeff = float(ing_qty) * float(self.coeff)
                             print('   '+ing_name+' '+str(self.ing_qty_coeff)+' qty')
 
-                            self.weight = self.weight + int(self.ing_qty_coeff)
 
+                            User.clear()
     #Price
                             for b_i in ing_names:
                                 con = sql.connect('sweet.db')
@@ -712,7 +714,8 @@ class PieceofCake(MDApp, Screen):
                                     basic_ing_qty = i[3]
 
 
-                                    self.ing_final_price = self.ing_qty_coeff * float(basic_ing_price)/float(basic_ing_qty)
+                                    self.ing_final_price = float(self.ing_qty_coeff) * float(basic_ing_price)/float(basic_ing_qty)
+
                             self.final_price = round((self.final_price + self.ing_final_price), 2)
                             print(str(basic_ing_name) + ' basic price = ' + str(basic_ing_price) + '$' + ' --> ' + str(basic_ing_qty + ' Gr'))
 
@@ -720,7 +723,7 @@ class PieceofCake(MDApp, Screen):
                 print(self.final_price)
 
         except:
-            self.Snackbar_message(message = "[color=#ff6600]    Add at least one ingredient![/color]")
+            self.Snackbar_message(message="[color=#ff6600]    Add at least one ingredient![/color]")
 
 
     # Create the SQL
