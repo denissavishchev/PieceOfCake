@@ -566,6 +566,7 @@ class PieceofCake(MDApp, Screen):
     all_names = []
     all_qtys = []
     all_units = []
+    nameID = []
 
     def add_ing_to_recipe(self, names, unit, qty):
         screen_manager.get_screen('createRecipe').ingredientforRecipe.add_widget(
@@ -596,17 +597,19 @@ class PieceofCake(MDApp, Screen):
                 con = sql.connect('sweet.db')
                 cur = con.cursor()
                 cur.execute(f"SELECT UserID FROM names WHERE names = '{Renames}'")
-                nameID = []
+
                 m = cur.fetchone()[0]
                 for i in range(len(self.names)):
-                    nameID.append(m)
+                    self.nameID.append(m)
+                    self.nameIDs = self.nameID
 
                 con = sql.connect('sweet.db')
                 cur = con.cursor()
                 cur.executemany(""" INSERT INTO ingredients (ing_names, unit, quantity, namesID) VALUES (?,?,?,?)""",
-                                zip(self.names, self.unit, self.qty, nameID))
+                                zip(self.names, self.unit, self.qty, self.nameID))
                 con.commit()
                 con.close()
+
             else:
                 self.Snackbar_message(message="[color=#ff6600]Ingredient [/color]" + str(
                     Renames) + "[color=#ff6600] is already exists![/color]")
@@ -614,6 +617,11 @@ class PieceofCake(MDApp, Screen):
         except:
             self.Snackbar_message(message="[color=#ff6600]    Add at least one ingredient![/color]")
 
+    def delete_ing(self):
+        self.nameIDs.clear()
+        self.all_names.clear()
+        self.all_qtys.clear()
+        self.all_units.clear()
 
     def load_recipes(self):
 
