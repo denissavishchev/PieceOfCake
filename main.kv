@@ -38,6 +38,7 @@
         text: 'Remove' if self.state == 'normal' else 'Rmd'
         on_release:
             MainPageRecipe.parent.remove_widget(MainPageRecipe)
+            app.remove_ing_from_main_page(Renames.text, Weight.text, Diameter.text)
         background_color: (0,0,0,0)
         background_normal: ''
         canvas.before:
@@ -383,7 +384,9 @@ MDScreen:
     circle: circle
     weight:weight
     MDFloatLayout:
-        md_bg_color: 72/255, 61/255, 139/255, .5
+        Image:
+            source:'image/bg-rb.png'
+            opacity: .5
 
         MDLabel:
             id: coefficient

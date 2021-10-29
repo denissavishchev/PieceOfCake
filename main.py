@@ -20,7 +20,7 @@ from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.textfield import MDTextFieldRect
 from kivymd.theming import ThemeManager
 
-Window.size = (360, 770)  # (1080, 2340)
+Window.size = (355, 770)  # (1080, 2340)
 
 
 class MainPageRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
@@ -654,6 +654,11 @@ class PieceofCake(MDApp, Screen):
         self.diameteres = self.all_diameteres
         # print(max(self.diameteres))
         self.max_diameter = max(self.diameteres)
+
+    def remove_ing_from_main_page(self, Renames, Weight, Diameter):
+        self.mainpages_names.remove(Renames)
+        diameter = ''.join(map(str, [int(word) for word in Diameter.split() if word.isdigit()]))
+        self.diameteres.remove(diameter)
 
 
     def coefficient(self, square, circle, square_length, square_width, circle_diameter):
