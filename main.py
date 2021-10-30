@@ -20,7 +20,7 @@ from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.textfield import MDTextFieldRect
 from kivymd.theming import ThemeManager
 
-Window.size = (355, 770)  # (1080, 2340)
+Window.size = (360, 770)  # (1080, 2340)
 
 
 class MainPageRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
@@ -217,14 +217,7 @@ class AddIngToRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavio
     unit = ObjectProperty()
     qty = ObjectProperty()
     Renames = ObjectProperty()
-    # def get_from(self):
-    #     names = self.ids.names.text
-    #     unit = self.ids.unit.text
-    #     qty = self.ids.qtyRe.text
-    # #     # names = MDApp.get_running_app().root.ids.addIngToRecipe.ids.names.text
-    #     print(qty)
-    #     print(names)
-    #     print(unit)
+
 
 
 class AddRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
@@ -713,8 +706,6 @@ class PieceofCake(MDApp, Screen):
                             ing_names.append(ing_name)
                             self.ing_qty_coeff = float(ing_qty) * float(self.coeff)
                             print('   '+ing_name+' '+str(self.ing_qty_coeff)+' qty')
-
-
                             User.clear()
     #Price
                             for b_i in ing_names:
@@ -725,7 +716,6 @@ class PieceofCake(MDApp, Screen):
                                     basic_ing_name = i[1]
                                     basic_ing_price = i[2]
                                     basic_ing_qty = i[3]
-
 
                                     self.ing_final_price = float(self.ing_qty_coeff) * float(basic_ing_price)/float(basic_ing_qty)
 
