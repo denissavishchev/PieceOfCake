@@ -18,7 +18,6 @@ from kivymd.uix.floatlayout import FloatLayout
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.textfield import MDTextFieldRect
-from kivymd.theming import ThemeManager
 
 Window.size = (360, 770)  # (1080, 2340)
 
@@ -398,9 +397,9 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
 class MyToggleButton(MDFillRoundFlatButton, MDToggleButton):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.md_bg_color = (75 / 255, 0 / 255, 130 / 255, .2)
-        self.background_down = (255 / 255, 102 / 255, 0 / 255, 1)
-        self.background_normal = (75 / 255, 0 / 255, 130 / 255, .2)
+        self.md_bg_color = (75 / 255, 0 / 255, 130 / 255, .3)
+        self.background_down = (75 / 255, 0 / 255, 130 / 255, .8)
+        self.background_normal = (75 / 255, 0 / 255, 130 / 255, .3)
 
 
 class PieceofCake(MDApp, Screen):
@@ -427,13 +426,13 @@ class PieceofCake(MDApp, Screen):
     popup = None
 
     def Snackbar_message(self, message):
-        Snackbar(text=f'{message}',
+        Snackbar(text=f'[font=KaushanScript-Regular.ttf]{message}[/font]',
                  snackbar_x='10dp', snackbar_y='10dp',
                  duration=1,
                  size_hint_x=(Window.width - (dp(10) * 2)) / Window.width,
                  bg_color=(75 / 255, 0 / 255, 130 / 255, .2),
                  radius=[20],
-                 font_size='17sp').open()
+                 font_size='20sp').open()
 
     def build(self):
         global screen_manager
