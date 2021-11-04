@@ -71,6 +71,11 @@ class CustomPopup(Popup, FakeRectangularElevationBehavior, FloatLayout, TouchBeh
                                  unit=all_units, Recomment=Recomment).open()
 
 
+class CustomPopupRecipe(Popup, FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
+    unit = ObjectProperty()
+
+
+
 class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior):
     Renames = ObjectProperty()
     UnitC = ObjectProperty()
@@ -341,23 +346,60 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
         self.pop2.open()
         return layout
 
+    all_ing_names = []
+    all_recipe_names = []
+    all_IDs = []
     def delete_button(self, obj):
+
         con = sql.connect('sweet.db')
         cur = con.cursor()
-        cur.execute("""SELECT * FROM sweet""")
-        cur.execute("""DELETE FROM sweet WHERE names = ? and price = ? and quantity = ? and comment = ?""",
-                    (self.names, self.price, self.quantity, self.comment))
-        con.commit()
+        cur.execute("""SELECT * FROM ingredients""")
+        for x in cur:
+            ing_names = x[1]
+            namesID = x[4]
+            self.all_ing_names.append(ing_names)
+            if self.names in self.all_ing_names and self.names == ing_names:
 
-        self.pop1.dismiss()
-        self.pieceofcake = PieceofCake()
-        self.pieceofcake.clean_ingredient_list()
-        self.pieceofcake.load_ingredient()
+                con = sql.connect('sweet.db')
+                cur = con.cursor()
+                cur.execute("""SELECT * FROM names""")
+                for y in cur:
+                    recipe_name = y[1]
+                    recipeID = y[0]
+                    self.all_IDs.append(recipeID)
+                    if namesID in self.all_IDs and namesID == recipeID:
+                        self.all_recipe_names.append(recipe_name)
+                # print(str(self.names) + str(namesID))
 
-        self.snackbar = PieceofCake()
-        self.snackbar.Snackbar_message(
-            message="[color=#ff6600]Ingredient [/color]" + str(self.names) + "[color=#ff6600] removed![/color]")
+        list_of_recipes = ('\n'.join(self.all_recipe_names))
 
+        self.popup = CustomPopupRecipe(title="Can't delete: "+self.names, title_size='25sp', title_color=[200 / 255, 199 / 255, 234 / 255, 1],
+                                 unit=list_of_recipes).open()
+
+        self.all_ing_names.clear()
+        self.all_recipe_names.clear()
+        self.all_IDs.clear()
+
+                # con = sql.connect('sweet.db')
+                # cur = con.cursor()
+                # cur.execute("""SELECT * FROM sweet""")
+                # cur.execute("""DELETE FROM sweet WHERE names = ? and price = ? and quantity = ? and comment = ?""",
+                #             (self.names, self.price, self.quantity, self.comment))
+                # con.commit()
+
+                # self.pop1.dismiss()
+                # self.pieceofcake = PieceofCake()
+                # self.pieceofcake.clean_ingredient_list()
+                # self.pieceofcake.load_ingredient()
+                #
+                # self.snackbar = PieceofCake()
+                # self.snackbar.Snackbar_message(
+                #     message="[color=#ff6600]Ingredient [/color]" + str(self.names) + "[color=#ff6600] removed![/color]")
+
+    def close_clear(self):
+        self.all_ing_names.clear()
+        self.all_recipe_names.clear()
+        self.all_IDs.clear()
 
     def editIngredient(self, obj):
         con = sql.connect('sweet.db')

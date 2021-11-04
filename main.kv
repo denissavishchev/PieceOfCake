@@ -130,6 +130,55 @@
             height: "40dp"
             on_press: root.dismiss()
 
+<CustomPopupRecipe>:
+    id: popup
+    auto_dismiss: False
+    contentBox: content_box
+    BoxLayout:
+        id: content_box
+        orientation: "vertical"
+        content: content_text
+        size_hint: .01, 1
+
+        MDLabel:
+            text: '  List of Recipes:'
+            size_hint: .9, .1
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1
+            font_size: '20sp'
+            font_name: 'KaushanScript-Regular.ttf'
+        ScrollView:
+            effect_cls: "ScrollEffect" # prevents overscrolling
+            MDLabel:
+                id: content_text
+                size_hint_y: None
+                height: self.texture_size[1]
+                text: str(root.unit)
+                text_size: (self.width-40), None
+                font_size: '18sp'
+                line_height: 1.2
+                valign: "top"
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+                font_name: 'KaushanScript-Regular.ttf'
+                canvas.before:
+                    Color:
+                        rgba: 216/255, 193/255, 222/255, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [20]
+                        source: 'image/1.png'
+
+        Buttons:
+            text: "Close"
+#            size_hint: None, .1
+            pos_hint: {"center_x": .5, "center_y": .5}
+            height: "40dp"
+            on_press:
+                root.dismiss()
+
+
 <CompleteRecipe>
     id: CompleteRecipe
     elevation: 1
@@ -481,7 +530,7 @@ MDScreen:
                 spacing: 15, 20
 
         FloatLayout:
-            pos_hint: {"center_x": .5, "center_y": .4}
+            pos_hint: {"center_x": .5, "center_y": .5}
             MyToggleButton:
                 id: square
                 size_hint: .3, .13
@@ -578,7 +627,7 @@ MDScreen:
 
         Buttons:
             text: 'Result'
-            pos_hint: {"center_x": .18, "center_y": .2}
+            pos_hint: {"center_x": .18, "center_y": .3}
             size_hint: .25, .1
             font_size: '30sp'
             on_release:
@@ -591,7 +640,7 @@ MDScreen:
 
         MDFloatLayout:
             size_hint: .25, .08
-            pos_hint: {"center_x": .5, "center_y": .2}
+            pos_hint: {"center_x": .5, "center_y": .3}
             canvas:
                 Color:
                     rgb: (200/255, 200/255, 200/255, 1)
@@ -607,7 +656,7 @@ MDScreen:
                 pos_hint: {"center_x": .6, "center_y": .5}
         MDFloatLayout:
             size_hint: .25, .08
-            pos_hint: {"center_x": .8, "center_y": .2}
+            pos_hint: {"center_x": .8, "center_y": .3}
             canvas:
                 Color:
                     rgb: (200/255, 200/255, 200/255, 1)
@@ -624,7 +673,7 @@ MDScreen:
 
         Buttons:
             text: 'Download as PDF'
-            pos_hint: {"center_x": .5, "center_y": .1}
+            pos_hint: {"center_x": .5, "center_y": .15}
             size_hint: .9, .05
             font_size: '30sp'
             on_release:
