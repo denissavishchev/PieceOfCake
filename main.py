@@ -373,28 +373,29 @@ class AddIngredient(FakeRectangularElevationBehavior, FloatLayout, TouchBehavior
 
         list_of_recipes = ('\n'.join(self.all_recipe_names))
 
-        self.popup = CustomPopupRecipe(title="Can't delete: "+self.names, title_size='25sp', title_color=[200 / 255, 199 / 255, 234 / 255, 1],
-                                 unit=list_of_recipes).open()
+        if list_of_recipes:
+            self.popup = CustomPopupRecipe(title="Can't delete: "+self.names, title_size='25sp', title_color=[200 / 255, 199 / 255, 234 / 255, 1],
+                                     unit=list_of_recipes).open()
 
-        self.all_ing_names.clear()
-        self.all_recipe_names.clear()
-        self.all_IDs.clear()
+            self.all_ing_names.clear()
+            self.all_recipe_names.clear()
+            self.all_IDs.clear()
+        else:
+            con = sql.connect('sweet.db')
+            cur = con.cursor()
+            cur.execute("""SELECT * FROM sweet""")
+            cur.execute("""DELETE FROM sweet WHERE names = ? and price = ? and quantity = ? and comment = ?""",
+                        (self.names, self.price, self.quantity, self.comment))
+            con.commit()
 
-                # con = sql.connect('sweet.db')
-                # cur = con.cursor()
-                # cur.execute("""SELECT * FROM sweet""")
-                # cur.execute("""DELETE FROM sweet WHERE names = ? and price = ? and quantity = ? and comment = ?""",
-                #             (self.names, self.price, self.quantity, self.comment))
-                # con.commit()
+            self.pop1.dismiss()
+            self.pieceofcake = PieceofCake()
+            self.pieceofcake.clean_ingredient_list()
+            self.pieceofcake.load_ingredient()
 
-                # self.pop1.dismiss()
-                # self.pieceofcake = PieceofCake()
-                # self.pieceofcake.clean_ingredient_list()
-                # self.pieceofcake.load_ingredient()
-                #
-                # self.snackbar = PieceofCake()
-                # self.snackbar.Snackbar_message(
-                #     message="[color=#ff6600]Ingredient [/color]" + str(self.names) + "[color=#ff6600] removed![/color]")
+            self.snackbar = PieceofCake()
+            self.snackbar.Snackbar_message(
+                message="[color=#ff6600]Ingredient [/color]" + str(self.names) + "[color=#ff6600] removed![/color]")
 
     def close_clear(self):
         self.all_ing_names.clear()
