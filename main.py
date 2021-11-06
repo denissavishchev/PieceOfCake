@@ -20,6 +20,9 @@ from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.textfield import MDTextFieldRect
 from kivymd.uix.textfield import MDTextFieldRound
 from kivymd.uix.textfield import MDTextField
+from reportlab.pdfgen.canvas import Canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 Window.size = (360, 770)  # (1080, 2340)
 
@@ -729,8 +732,7 @@ class PieceofCake(MDApp, Screen):
         else:
             self.coeff = 1
 
-
-
+    one_ing_final_price = []
     def result_price(self):
         print('Koefficient '+str(self.coeff)+'\n')
         try:
@@ -773,16 +775,72 @@ class PieceofCake(MDApp, Screen):
                                     basic_ing_qty = i[3]
 
                                     self.ing_final_price = float(self.ing_qty_coeff) * float(basic_ing_price)/float(basic_ing_qty)
+                                    # different = self.final_price - self.ing_final_price
 
                             self.final_price = round((self.final_price + self.ing_final_price), 2)
+
                             print(str(basic_ing_name) + ' basic price = ' + str(basic_ing_price) + '$' + ' --> ' + str(basic_ing_qty + ' Gr'))
 
-                print('\n')
-                print(self.final_price)
+            print('\n')
+
+            print(self.final_price)
 
         except:
             self.Snackbar_message(message="[color=#ff6600]    Add at least one ingredient![/color]")
 
+    def save_as(self, weight, save_as):
+        h = 500
+
+        pdfmetrics.registerFont(TTFont('KaushanScript-Regular', 'KaushanScript-Regular.ttf'))
+        pdf_name = str(save_as) + '.pdf'
+        canvas = Canvas(pdf_name, pagesize=(180, 510))
+        canvas.setFillColor('#4B0082')
+
+
+        recipe_to_pdf = []
+        diam_to_pdf = []
+        weight_to_pdf = []
+        for part_of_recipe_name in self.all_mainpages_names:
+            con = sql.connect('sweet.db')
+            cur = con.cursor()
+            cur.execute(f"SELECT * FROM names WHERE names = '{part_of_recipe_name}'")
+            for x in cur:
+                h = h-12
+                canvas.setFont('KaushanScript-Regular', 12)
+                recipe_id = x[0]
+                diam = x[3]
+                weight = x[4]
+                names_diam_weight = (part_of_recipe_name+' D='+diam+' W='+weight+':')
+                print(names_diam_weight)
+                canvas.drawString(10, h, str(names_diam_weight))
+                h=h-3
+                canvas.line(10,h, 170, h)
+                cur.execute(f"SELECT * FROM ingredients WHERE namesID = '{recipe_id}'")
+
+                for z in cur:
+                    h = h - 12
+                    canvas.setFont('KaushanScript-Regular', 8)
+                    ing_name = z[1]
+                    ing_qty = z[3]
+                    ing_unit = z[2]
+                    ing_names_qty_unit = (ing_name+' '+ing_qty+' '+ing_unit)
+                    print(ing_names_qty_unit)
+                    canvas.drawString(10, h, ing_names_qty_unit)
+                recipe_to_pdf.append(part_of_recipe_name)
+                diam_to_pdf.append(diam)
+                weight_to_pdf.append(weight)
+            h = h - 8
+        print('\nTotal price = '+str(self.final_price))
+        print(recipe_to_pdf)
+        h=h-20
+        print(h)
+        if h < 0:
+            h = h+370
+        canvas.setFont('KaushanScript-Regular', 14)
+        final_price_to_pdf = ('Total price: '+str(self.final_price))
+        canvas.drawString(10, h, str(final_price_to_pdf))
+
+        canvas.save()
 
     # Create the SQL
     con = sql.connect('sweet.db')

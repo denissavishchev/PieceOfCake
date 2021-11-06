@@ -671,13 +671,44 @@ MDScreen:
                 font_name: 'KaushanScript-Regular.ttf'
                 pos_hint: {"center_x": .6, "center_y": .5}
 
+        MDFloatLayout:
+            size_hint: .55, .05
+            pos_hint: {"center_x": .35, "center_y": .15}
+            canvas:
+                Color:
+                    rgba: (200/255, 200/255, 200/255, 1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius: [25]
+            TextInput:
+                id: save_as
+                hint_text: 'File Name'
+                size_hint: 1, None
+                pos_hint: {"center_x": .5, "center_y": .5}
+                height: self.minimum_height
+                multiline: False
+                cursor_color: 75/255, 0/255, 130/255, 1
+                background_color: 0, 0, 0, 0
+                font_name: 'KaushanScript-Regular.ttf'
+                padding: 15
+                font_size: '18sp'
         Buttons:
-            text: 'Download as PDF'
-            pos_hint: {"center_x": .5, "center_y": .15}
-            size_hint: .9, .05
+            text: 'Save'
+            pos_hint: {"center_x": .8, "center_y": .15}
+            size_hint: .2, .05
             font_size: '30sp'
             on_release:
-                main_price.text = 'Done'
+                if result_price.text == 'Price':\
+                app.Snackbar_message("[color=#ff6600]Nothing to save [/color]")
+
+                elif save_as.text == '':\
+                app.Snackbar_message("[color=#ff6600]Add Name to save [/color]")
+
+                else:\
+                app.save_as(weight.text, save_as.text)
+                app.Snackbar_message("[color=#ff6600]Saved![/color]")
+
 
 <Buttons@MDFillRoundFlatButton>
 
