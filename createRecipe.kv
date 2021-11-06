@@ -108,7 +108,7 @@ MDScreen:
                     radius: [25]
             TextInput:
                 id: Diameter
-                hint_text: 'Dmtr'
+                hint_text: 'D'
                 multiline: False
                 size_hint: 1, None
                 input_filter:'float'
@@ -130,7 +130,7 @@ MDScreen:
                     radius: [25]
             TextInput:
                 id: Weight
-                hint_text: 'Wght'
+                hint_text: 'W'
                 size_hint: 1, None
                 input_filter:'float'
                 multiline: False
@@ -152,6 +152,13 @@ MDScreen:
             on_release:
                 if Renames.text == '':\
                 app.Snackbar_message("[color=#ff6600]Add Name [/color]")
+
+                elif Diameter.text == '':\
+                app.Snackbar_message("[color=#ff6600]Add Diameter [/color]")
+
+                elif Weight.text == '':\
+                app.Snackbar_message("[color=#ff6600]Add Weight [/color]")
+
 
                 else:\
                 app.create_recipe(Renames.text, Recomment.text, Weight.text, Diameter.text)
