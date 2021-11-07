@@ -4,7 +4,7 @@ from time import strftime
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.metrics import dp
-from kivy.properties import ObjectProperty, StringProperty
+from kivy.properties import ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -15,11 +15,8 @@ from kivymd.uix.behaviors.toggle_behavior import MDToggleButton
 from kivymd.uix.button import MDFillRoundFlatButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import FloatLayout
-from kivymd.uix.screen import MDScreen
 from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.textfield import MDTextFieldRect
-from kivymd.uix.textfield import MDTextFieldRound
-from kivymd.uix.textfield import MDTextField
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -44,7 +41,6 @@ class CustomPopup(Popup, FakeRectangularElevationBehavior, FloatLayout, TouchBeh
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.background_color = (75 / 255, 0 / 255, 130 / 255, .6)
-        # self.background = 'image/bg.png'
 
     def show_recipe1(self, Renames):
         con = sql.connect('sweet.db')
@@ -140,11 +136,6 @@ class CompleteRecipe(FakeRectangularElevationBehavior, FloatLayout, TouchBehavio
         self.editNames = MDTextFieldRect(text=self.Renames, pos=(100, 1000), size_hint=(.95, .07), multiline=False)
         layout1.add_widget(self.editNames)
 
-        # self.editPrice = MDTextFieldRect(text=self.comment, pos=(100, 920), size_hint=(.45, .07), multiline=False)
-        # layout1.add_widget(self.editPrice)
-
-        # self.editQty = MDTextFieldRect(text=self.quantity, pos=(100, 840), size_hint=(.45, .07), multiline=False)
-        # layout1.add_widget(self.editQty)
 
         self.editComment = MDTextFieldRect(text=self.comment, pos=(100, 600), size_hint=(.95, .3))
         layout1.add_widget(self.editComment)
@@ -840,6 +831,9 @@ class PieceofCake(MDApp, Screen):
         final_price_to_pdf = ('Total price: '+str(self.final_price))
         canvas.drawString(10, h, str(final_price_to_pdf))
 
+
+        # if not os.path.exists(f"recipes/'{save_as}'.pdf"):
+        #     os.mkdir(f"recipes/'{save_as}'.pdf")
         canvas.save()
 
     # Create the SQL
